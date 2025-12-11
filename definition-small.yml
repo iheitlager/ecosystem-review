@@ -1,0 +1,74 @@
+# ============================================================================
+# Innovation Review Configuration - LOCAL TEST
+# ============================================================================
+
+# Project metadata
+project:
+  name: "Supplier Digital Innovation Review"
+  description: "Systematic literature review on supplier involvement in digital innovation"
+  researcher: "Ilja Heitlager"
+  email: "i.heitlager@tue.nl"
+  institution: "TU Eindhoven"
+  start_date: "2024-01-15"
+  research_question: "How do incumbent firms involve suppliers in digital innovation processes?"
+
+# Database configuration
+database:
+  host: "localhost"
+  port: 5432
+  name: "paper_scanner"
+  user: "pdfuser"
+  password: "pdfpass"
+
+# Search definition
+search:
+  name: "Supplier Digital Innovation Review"
+  description: "Papers on supplier/vendor involvement in digital innovation and transformation"
+  
+  # Search string (for documentation) 
+  query_definition: 
+    - "(vendor* OR supplier* OR partner* OR 'service provider' OR provider*) AND ('digital innovation' OR 'digital strategy' OR 'digital transformation')" 
+
+  # Date range
+  date_range:
+    from: 2015
+    to: 2024
+  
+  # Databases searched
+  databases:
+    - scopus
+    - web_of_science
+    - ieee_xplore
+
+# Import configuration - using local test data
+steps:
+  - step: Load some files from folder
+    builtin.load_files:
+      file_path: "data/pdf"
+      store_path: "output/pdf"
+      download_details: true
+      source:
+        - crossref
+      expected_count: 3
+
+  - step: Display database statistics and summary
+    builtin.summarize:
+      summary: true
+      tabulate:
+        - field: paper_type
+          duplicates: false
+
+  - step: Export database to JSONL format
+    builtin.export:
+      format: jsonl
+      output_path: "./output/papers_export.jsonl"
+      exclude_none: true
+      duplicates: false
+      overwrite: true
+
+  - step: Export database to BibTeX format
+    builtin.export:
+      format: bibtex
+      output_path: "./output/papers_export.bib"
+      duplicates: false
+      overwrite: true

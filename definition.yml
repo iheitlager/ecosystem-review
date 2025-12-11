@@ -46,18 +46,18 @@ steps:
       batch_id: "import_test_20241209"
       imports:
         - name: "Scopus Dataset"
-          file_path: "data/scopus.bib"
+          file_path: "data/bib/scopus.bib"
           source_type: "scopus"
           fix_cite_key: true
           expected_count: 19
 
         - name: "IEEE Dataset"
-          file_path: "data/ieee.bib"
+          file_path: "data/bib/ieee.bib"
           source_type: "ieee_xplore"
           expected_count: 20
           
         - name: "Web of Science Dataset"
-          file_path: "data/wos.bib"
+          file_path: "data/bib/wos.bib"
           source_type: "web_of_science"
           expected_count: 20
 
