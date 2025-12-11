@@ -24,6 +24,10 @@ search:
   name: "Supplier Digital Innovation Review"
   description: "Papers on supplier/vendor involvement in digital innovation and transformation"
   
+  # Search string (for documentation) 
+  query_definition: 
+    - "(vendor* OR supplier* OR partner* OR 'service provider' OR provider*) AND ('digital innovation' OR 'digital strategy' OR 'digital transformation')" 
+
   # Date range
   date_range:
     from: 2015
@@ -44,16 +48,17 @@ steps:
         - name: "Scopus Dataset"
           file_path: "data/scopus.bib"
           source_type: "scopus"
+          fix_cite_key: true
           expected_count: 19
 
         - name: "IEEE Dataset"
           file_path: "data/ieee.bib"
-          source_type: "ieee"
+          source_type: "ieee_xplore"
           expected_count: 20
           
         - name: "Web of Science Dataset"
           file_path: "data/wos.bib"
-          source_type: "wos"
+          source_type: "web_of_science"
           expected_count: 20
 
   - step: "Intermediate message"
@@ -65,7 +70,6 @@ steps:
 
   - step: Deduplicate papers using multiple matching methods
     builtin.deduplication:
-      enabled: true
       methods:
         - method: "doi_exact"
           priority: 1
@@ -81,12 +85,11 @@ steps:
 
   - step: Categorize and screen papers for quality
     builtin.categorization:
-      enabled: true
+      exclude_types: true
+      exclude_reviews: true
 
   - step: Keyword-based screening
     builtin.keyword_screening:
-      enabled: true
-    
       # Hard exclusion keywords (if found, exclude immediately)
       exclusion_keywords:
         domains:
@@ -135,37 +138,121 @@ steps:
           - "collaboration"
           - "co-creation"
 
+  - step: Semantic screening based on research question
+    builtin.semantic_screening:
+      model: "all-mpnet-base-v2"
+      thresholds:
+        auto_include: 0.65
+        manual_review: 0.50
+        auto_exclude: 0.50
+
   - step: Save checkpoint after screening
     builtin.checkpoint:
 
-  - step: Display database statistics and summary
+  # - step: Display database statistics and summary
+  #   builtin.summarize:
+  #     summary: true
+  #     tabulate:
+  #       - field: paper_type
+  #         duplicates: false
+  #       - field: journal
+  #         duplicates: false
+
+  - step: Display screening results
     builtin.summarize:
-      summary: true
-      tabulate:
-        - field: paper_type
-          duplicates: false
-        - field: journal
-          duplicates: false
+      screening: true
+
   
+  # # Expansion configuration (snowballing) 
+  # - step: Snowball first selection
+  #   builtin.expansion:
+
+  #     # Backward citations 
+  #     backward: 
+  #       max_iterations: 3 
+  #       saturation_threshold: 0.05 # Stop if new papers < 5% of first iteration 
+  #       # Reference extraction methods (in priority order) 
+  #       extraction_methods: 
+  #         # - "grobid" 
+  #         - "crossref" 
+  #         # - "semantic_scholar" 
+  #         # - "llm_fallback" 
+        
+      # # Forward citations 
+      # forward: 
+      #   min_year: 2023 # Only recent papers 
+      #   max_papers_per_source: 100 
+      #   sources: 
+      #     - "semantic_scholar" 
+      #     - "crossref" 
+          
+      # # Literature review mining 
+      # review_mining: 
+      #   enabled: true 
+      #   description: "Extract references from excluded literature reviews" 
+        
+  # # PDF download configuration 
+  # - step: Download PDFs for selected papers
+  #   builtin.pdf_download:
+  #     max_concurrent: 5 
+  #     timeout_seconds: 30 
+  #     retry_attempts: 3 
+      
+  #   # Sources (in priority order) 
+  #     sources: 
+  #       - name: "unpaywall" 
+  #         enabled: true 
+  #         api_key: null # No key needed 
+          
+  #       - name: "openalex" 
+  #         enabled: true 
+  #         try_all_locations: true # Try ALL locations, not just best 
+          
+  #       - name: "semantic_scholar" 
+  #         enabled: true 
+  #         api_key: null 
+          
+  #       - name: "pubmed_central" 
+  #         enabled: true 
+          
+  #       - name: "europe_pmc" 
+  #         enabled: true 
+          
+  #       - name: "arxiv" 
+  #         enabled: true 
+          
+  #       - name: "core" 
+  #         enabled: true 
+  #         api_key: "${CORE_API_KEY}" # Set in environment 
+          
+  #       - name: "base" enabled: true 
+        
+  #       - name: "publisher_direct" enabled: true use_institutional_access: true vpn_required: true 
+        
+  #   # Storage 
+  #     storage: 
+  #       base_path: "/Users/iheitlager/wc/innovation-review/pdfs" 
+  #       organize_by: "year" # or "source" or "flat"
+
   - step: Export database to JSONL format
     builtin.export:
       format: jsonl
-      output_path: "~/tmp/papers_export.jsonl"
+      output_path: "./output/papers_export.jsonl"
       exclude_none: true
       duplicates: false
       overwrite: true
 
-  - step: Export database to JSONL format
-    builtin.export:
-      format: jsonl
-      output_path: "~/tmp/papers_export_duplicates_only.jsonl"
-      exclude_none: false
-      duplicates: only
-      overwrite: true
+  # - step: Export database to JSONL format
+  #   builtin.export:
+  #     format: jsonl
+  #     output_path: "~/tmp/papers_export_duplicates_only.jsonl"
+  #     exclude_none: false
+  #     duplicates: only
+  #     overwrite: true
 
   - step: Export database to BibTeX format
     builtin.export:
       format: bibtex
-      output_path: "~/tmp/papers_export.bib"
-      duplicates: only
+      output_path: "./output/papers_export.bib"
+      duplicates: false
       overwrite: true
