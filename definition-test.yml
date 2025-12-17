@@ -4,7 +4,7 @@
 
 # Project metadata
 project:
-  name: "Supplier Digital Innovation Review"
+  name: "Digital Innovation Review"
   description: "Systematic literature review on supplier involvement in digital innovation"
   researcher: "Ilja Heitlager"
   email: "i.heitlager@tue.nl"
@@ -42,49 +42,11 @@ search:
 
 # Import configuration - using local test data
 steps:
-  - step: Load some files from folder
-    builtin.load_files:
-      file_path: "data/pdf"
-      store_path: "output/pdf"
-      download_details: true
-      source:
-        - crossref
-      expected_count: 3
-
-  - step: Patch some records
-    builtin.patch:
-      patches:
-        - doi: "10.1080/10864415.2024.2332047"
-          replace_fields:
-            abstract: "blabla"
-          append_fields:
-            keywords:
-              - "new-keyword"
-
-  # - step: Import sample BibTeX files from second source
-  #   builtin.bibtex_import:
-  #     batch_id: "import_test_20241209"
-  #     imports:
-  #       - name: "Scopus Dataset"
-  #         file_path: "./output/papers_export.bib"
-  #         source_type: "other"
-  #         fix_cite_key: true
-  #         expected_count: 5
-
-  # - step: "Dump database contents"
-  #   builtin.dump_db:
-
-  # - step: Deduplicate papers using multiple matching methods
-  #   builtin.deduplication:
-  #     methods:
-  #       - method: "doi_exact"
-  #         priority: 1
-  #       - method: "title_author_fuzzy"
-  #         priority: 2
-  #         threshold: 0.90
-  #       - method: "title_fuzzy"
-  #         priority: 3
-  #         threshold: 0.95
+  - step: Load a review paper 
+    builtin.paper:
+      papers:
+        - doi: 10.1016/j.technovation.2025.103396
+          article-type: journal_article
 
   - step: "Get the full details"
     builtin.retrieve_metadata:
@@ -92,38 +54,35 @@ steps:
         - crossref
       overwrite: true
 
-
-
   # Expansion configuration (snowballing) 
-  - step: Snowball first selection
+  - step: Snowball database selection
     builtin.citations:
 
       # Backward citations 
       backward: 
         paper-types:
-          - "journal_article"      
-        # Reference extraction methods (in priority order) 
+          - "journal_article"    
+        limit: 5  
         sources: 
           - "crossref" 
-          # - "grobid" 
-          # - "semantic_scholar" 
-          # - "llm_fallback" 
-        # max_iterations: 3 
-        # saturation_threshold: 0.05 # Stop if new papers < 5% of first iteration 
+
+  - step: "Create a checkpoint"
+    builtin.checkpoint:
+      name: "after_snowball_1"
 
   - step: "Dump database contents"
     builtin.dump_db:
       citations:
 
-  - step: Display screening results
+  - step: "Explain totals"
     builtin.summarize:
-      screening: true
+      papers:
 
   - step: Export database to JSONL format
     builtin.export:
       format: jsonl
       # output: stdout
-      output_path: "./output/papers_export.jsonl"
+      output_path: "./output/papers_test.jsonl"
       exclude_none: true
       duplicates: false
       overwrite: true
@@ -131,6 +90,6 @@ steps:
   - step: Export database to BibTeX format
     builtin.export:
       format: bibtex
-      output_path: "./output/papers_export.bib"
+      output_path: "./output/papers_test.bib"
       duplicates: false
       overwrite: true

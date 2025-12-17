@@ -173,7 +173,7 @@ steps:
   #       max_iterations: 3 
   #       saturation_threshold: 0.05 # Stop if new papers < 5% of first iteration 
   #       # Reference extraction methods (in priority order) 
-  #       extraction_methods: 
+  #       sources: 
   #         # - "grobid" 
   #         - "crossref" 
   #         # - "semantic_scholar" 
