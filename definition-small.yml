@@ -97,23 +97,23 @@ steps:
   # Expansion configuration (snowballing) 
   - step: Snowball first selection
     builtin.citations:
-
       # Backward citations 
       backward: 
         paper-types:
           - "journal_article"      
         # Reference extraction methods (in priority order) 
-        sources: 
+        citations: 
+          - "crossref"
+        details:
           - "crossref" 
-          # - "grobid" 
-          # - "semantic_scholar" 
-          # - "llm_fallback" 
-        # max_iterations: 3 
-        # saturation_threshold: 0.05 # Stop if new papers < 5% of first iteration 
+          - "openalex"
+        limit: 10
+        output_errors: output/errors.json
 
-  - step: "Dump database contents"
-    builtin.dump_db:
-      citations:
+
+  # - step: "Dump database contents"
+  #   builtin.dump_db:
+  #     citations:
 
   - step: Display screening results
     builtin.summarize:

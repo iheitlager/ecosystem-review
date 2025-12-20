@@ -51,7 +51,7 @@ steps:
   - step: "Get the full details"
     builtin.retrieve_metadata:
       methods:
-        - crossref
+        - openalex
       overwrite: true
 
   # Expansion configuration (snowballing) 
@@ -62,13 +62,13 @@ steps:
       backward: 
         paper-types:
           - "journal_article"    
-        limit: 5  
-        sources: 
+        limit: 15
+        citations: 
+          - "crossref"
+        details:
           - "crossref" 
-
-  - step: "Create a checkpoint"
-    builtin.checkpoint:
-      name: "after_snowball_1"
+          - "openalex"
+        output_errors: output/errors.json
 
   - step: "Dump database contents"
     builtin.dump_db:
@@ -76,7 +76,8 @@ steps:
 
   - step: "Explain totals"
     builtin.summarize:
-      papers:
+      summary: true
+      bibliography: true
 
   - step: Export database to JSONL format
     builtin.export:

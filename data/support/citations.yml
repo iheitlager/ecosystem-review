@@ -1,0 +1,5 @@
+papers:
+  - match:
+      - title: "Firm resources and sustained competitive advantage"
+    patch:
+      - doi: 10.1016/0024-6301(91)90017-t
