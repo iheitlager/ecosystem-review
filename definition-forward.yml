@@ -45,63 +45,35 @@ steps:
   - step: Load a review paper 
     builtin.paper:
       papers:
-        - doi: 10.1016/j.technovation.2025.103396
+        - doi: 10.1186/s13731-024-00404-5
+        # - doi: 10.5465/amr.2018.0285
           article-type: journal_article
 
   - step: "Get the full details"
     builtin.retrieve_metadata:
       methods:
-        - openalex
-      overwrite: true
+        - crossref
+      overwrite: false
 
   # Expansion configuration (snowballing) 
-  - step: Snowball database selection
+  - step: Snowball forward references
     builtin.citations:
 
       # Backward citations 
-      backward: 
+      forward: 
         paper-types:
           - "journal_article"    
         limit: 15
         citations: 
-          - "crossref"
+          - "openalex"
         details:
           - "crossref" 
-          - "openalex"
-        output_errors: output/errors.json
+        output_errors: output/fwd_errors.json
 
-  - step: Download pdfs
-    builtin.download_pdfs:
-      max_retries: 3
-      timeout: 30
-      store_path: "output/pdf"
-      sources:
-        # - "unpaywall"
-        # - "core"
-        - "openalex"
-      output_errors: output/pdf_errors.json
-
-  - step: "Dump database contents"
-    builtin.dump_db:
-      citations:
-
-  - step: "Explain totals"
-    builtin.summarize:
-      summary: true
-      bibliography: true
-
-  - step: Export database to JSONL format
-    builtin.export:
-      format: jsonl
-      # output: stdout
-      output_path: "./output/papers_test.jsonl"
-      exclude_none: true
-      duplicates: false
-      overwrite: true
 
   - step: Export database to BibTeX format
     builtin.export:
       format: bibtex
-      output_path: "./output/papers_test.bib"
+      output_path: "./output/papers_fwd.bib"
       duplicates: false
       overwrite: true

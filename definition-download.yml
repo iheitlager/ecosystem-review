@@ -45,59 +45,35 @@ steps:
   - step: Load a review paper 
     builtin.paper:
       papers:
-        - doi: 10.1016/j.technovation.2025.103396
+        - doi: 10.1186/s13731-024-00404-5
           article-type: journal_article
+
+  - step: Import sample BibTeX files from different sources
+    builtin.bibtex_import:
+      limit: 25
+      imports:        
+        - name: "Scopus Dataset"
+          file_path: "data/bib/scopus.bib"
+          source_type: "scopus"
+          fix_cite_key: true
+          expected_count: 19
 
   - step: "Get the full details"
     builtin.retrieve_metadata:
       methods:
         - openalex
-      overwrite: true
-
-  # Expansion configuration (snowballing) 
-  - step: Snowball database selection
-    builtin.citations:
-
-      # Backward citations 
-      backward: 
-        paper-types:
-          - "journal_article"    
-        limit: 15
-        citations: 
-          - "crossref"
-        details:
-          - "crossref" 
-          - "openalex"
-        output_errors: output/errors.json
+      overwrite: false
 
   - step: Download pdfs
     builtin.download_pdfs:
-      max_retries: 3
       timeout: 30
       store_path: "output/pdf"
       sources:
         # - "unpaywall"
+        - "publisher"
         # - "core"
-        - "openalex"
+        # - "openalex"
       output_errors: output/pdf_errors.json
-
-  - step: "Dump database contents"
-    builtin.dump_db:
-      citations:
-
-  - step: "Explain totals"
-    builtin.summarize:
-      summary: true
-      bibliography: true
-
-  - step: Export database to JSONL format
-    builtin.export:
-      format: jsonl
-      # output: stdout
-      output_path: "./output/papers_test.jsonl"
-      exclude_none: true
-      duplicates: false
-      overwrite: true
 
   - step: Export database to BibTeX format
     builtin.export:
@@ -105,3 +81,38 @@ steps:
       output_path: "./output/papers_test.bib"
       duplicates: false
       overwrite: true
+
+  # # Expansion configuration (snowballing) 
+  # - step: Snowball database selection
+  #   builtin.citations:
+
+  #     # Backward citations 
+  #     backward: 
+  #       paper-types:
+  #         - "journal_article"    
+  #       limit: 15
+  #       citations: 
+  #         - "crossref"
+  #       details:
+  #         - "crossref" 
+  #         - "openalex"
+  #       output_errors: output/errors.json
+
+  # - step: "Dump database contents"
+  #   builtin.dump_db:
+  #     citations:
+
+  # - step: "Explain totals"
+  #   builtin.summarize:
+  #     summary: true
+  #     bibliography: true
+
+  # - step: Export database to JSONL format
+  #   builtin.export:
+  #     format: jsonl
+  #     # output: stdout
+  #     output_path: "./output/papers_test.jsonl"
+  #     exclude_none: true
+  #     duplicates: false
+  #     overwrite: true
+

@@ -46,9 +46,6 @@ steps:
     builtin.load_files:
       file_path: "data/pdf"
       store_path: "output/pdf"
-      download_details: true
-      source:
-        - crossref
       expected_count: 3
 
   - step: Patch some records
