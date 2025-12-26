@@ -40,6 +40,86 @@ search:
     - web_of_science
     - ieee_xplore
 
+templates:
+  - template: "screen_basics"
+    steps:
+    - step: Deduplicate papers using multiple matching methods
+      builtin.deduplication:
+        methods:
+          - method: "doi_exact"
+            priority: 1
+          - method: "title_author_fuzzy"
+            priority: 2
+            threshold: 0.90
+          - method: "title_fuzzy"
+            priority: 3
+            threshold: 0.95
+
+
+
+    - step: Categorize and screen papers for quality
+      builtin.categorization:
+        exclude_types: true
+        exclude_reviews: true
+
+    - step: Keyword-based screening
+      builtin.keyword_screening:
+        # Hard exclusion keywords (if found, exclude immediately)
+        exclusion_keywords:
+          domains:
+            - "medical"
+            - "healthcare"
+            - "patient"
+            - "disease"
+            - "clinical"
+            - "pharmaceutical"
+            - "drug"
+          other:
+            - "agriculture"
+            - "farming"
+            - "crop"
+            - "education"
+            - "classroom"
+            - "student"
+            - "military"
+            - "weapon"
+            - "consumer behavior"
+            - "retail customer"
+        
+        # Inclusion keywords (need matches)
+        inclusion_keywords:
+          innovation:
+            - "digital innovation"
+            - "digitalization"
+            - "digitization"
+            - "digital transformation"
+            - "technology adoption"
+            - "platform"
+            - "ecosystem"
+          organization:
+            - "firm"
+            - "company"
+            - "organization"
+            - "enterprise"
+            - "incumbent"
+            - "business"
+          collaboration:
+            - "supplier"
+            - "vendor"
+            - "partner"
+            - "service provider"
+            - "provider"
+            - "collaboration"
+            - "co-creation"
+
+    - step: Semantic screening based on research question
+      builtin.semantic_screening:
+        model: "all-mpnet-base-v2"
+        thresholds:
+          auto_include: 0.65
+          manual_review: 0.50
+          auto_exclude: 0.50
+
 # Import configuration - using local test data
 steps:
   - step: Import sample BibTeX files from different sources
@@ -62,10 +142,6 @@ steps:
           source_type: "web_of_science"
           expected_count: 20
 
-  - step: "Intermediate message"
-    builtin.echo:
-      message: "Processing complete - bibtex imported"
-
   - step: Save checkpoint after import
     builtin.checkpoint:
 
@@ -84,172 +160,47 @@ steps:
   - step: Save checkpoint after deduplication
     builtin.checkpoint:
 
-  - step: Categorize and screen papers for quality
-    builtin.categorization:
-      exclude_types: true
-      exclude_reviews: true
+  - step: Perform pre screening
+    builtin.run-template:
+      template: "screen_basics"
 
-  - step: Keyword-based screening
-    builtin.keyword_screening:
-      # Hard exclusion keywords (if found, exclude immediately)
-      exclusion_keywords:
-        domains:
-          - "medical"
-          - "healthcare"
-          - "patient"
-          - "disease"
-          - "clinical"
-          - "pharmaceutical"
-          - "drug"
-        other:
-          - "agriculture"
-          - "farming"
-          - "crop"
-          - "education"
-          - "classroom"
-          - "student"
-          - "military"
-          - "weapon"
-          - "consumer behavior"
-          - "retail customer"
-      
-      # Inclusion keywords (need matches)
-      inclusion_keywords:
-        innovation:
-          - "digital innovation"
-          - "digitalization"
-          - "digitization"
-          - "digital transformation"
-          - "technology adoption"
-          - "platform"
-          - "ecosystem"
-        organization:
-          - "firm"
-          - "company"
-          - "organization"
-          - "enterprise"
-          - "incumbent"
-          - "business"
-        collaboration:
-          - "supplier"
-          - "vendor"
-          - "partner"
-          - "service provider"
-          - "provider"
-          - "collaboration"
-          - "co-creation"
-
-  - step: Semantic screening based on research question
-    builtin.semantic_screening:
-      model: "all-mpnet-base-v2"
-      thresholds:
-        auto_include: 0.65
-        manual_review: 0.50
-        auto_exclude: 0.50
-
-  - step: Save checkpoint after screening
+  - step: Save checkpoint after pre screening
     builtin.checkpoint:
-
-  # - step: Display database statistics and summary
-  #   builtin.summarize:
-  #     summary: true
-  #     tabulate:
-  #       - field: paper_type
-  #         duplicates: false
-  #       - field: journal
-  #         duplicates: false
 
   - step: Display screening results
     builtin.summarize:
       screening: true
 
-  
-  # # Expansion configuration (snowballing) 
-  # - step: Snowball first selection
-  #   builtin.expansion:
-
-  #     # Backward citations 
-  #     backward: 
-  #       max_iterations: 3 
-  #       saturation_threshold: 0.05 # Stop if new papers < 5% of first iteration 
-  #       # Reference extraction methods (in priority order) 
-  #       sources: 
-  #         # - "grobid" 
-  #         - "crossref" 
-  #         # - "semantic_scholar" 
-  #         # - "llm_fallback" 
+  # Citation expansion configuration (snowballing) 
+  - step: Snowball database selection
+    builtin.citations:
+      screeening_template: "screen_basics"
+      # Backward citations 
+      backward: 
+        paper-types:
+          - "journal_article"    
+        citations: 
+          - "crossref"
+        details:
+          - "crossref" 
+          - "openalex"
+        output_errors: output/errors.json
+        iterations: 3
+        saturation_threshold: 0.05 # Stop if new papers < 5% of first iteration 
         
-      # # Forward citations 
-      # forward: 
-      #   min_year: 2023 # Only recent papers 
-      #   max_papers_per_source: 100 
-      #   sources: 
-      #     - "semantic_scholar" 
-      #     - "crossref" 
-          
-      # # Literature review mining 
-      # review_mining: 
-      #   enabled: true 
-      #   description: "Extract references from excluded literature reviews" 
-        
-  # # PDF download configuration 
-  # - step: Download PDFs for selected papers
-  #   builtin.pdf_download:
-  #     max_concurrent: 5 
-  #     timeout_seconds: 30 
-  #     retry_attempts: 3 
-      
-  #   # Sources (in priority order) 
-  #     sources: 
-  #       - name: "unpaywall" 
-  #         enabled: true 
-  #         api_key: null # No key needed 
-          
-  #       - name: "openalex" 
-  #         enabled: true 
-  #         try_all_locations: true # Try ALL locations, not just best 
-          
-  #       - name: "semantic_scholar" 
-  #         enabled: true 
-  #         api_key: null 
-          
-  #       - name: "pubmed_central" 
-  #         enabled: true 
-          
-  #       - name: "europe_pmc" 
-  #         enabled: true 
-          
-  #       - name: "arxiv" 
-  #         enabled: true 
-          
-  #       - name: "core" 
-  #         enabled: true 
-  #         api_key: "${CORE_API_KEY}" # Set in environment 
-          
-  #       - name: "base" enabled: true 
-        
-  #       - name: "publisher_direct" enabled: true use_institutional_access: true vpn_required: true 
-        
-  #   # Storage 
-  #     storage: 
-  #       base_path: "/Users/iheitlager/wc/innovation-review/pdfs" 
-  #       organize_by: "year" # or "source" or "flat"
-
-  - step: Export database to JSONL format
-    builtin.export:
-      format: jsonl
-      output_path: "./output/papers_export.jsonl"
-      exclude_none: true
-      duplicates: false
-      overwrite: true
-
-  # - step: Export database to JSONL format
-  #   builtin.export:
-  #     format: jsonl
-  #     output_path: "~/tmp/papers_export_duplicates_only.jsonl"
-  #     exclude_none: false
-  #     duplicates: only
-  #     overwrite: true
+      # Forward citations 
+      forward: 
+        paper-types:
+          - "journal_article"    
+        year_limit: 2024
+        citations: 
+          - "openalex"
+        details:
+          - "crossref" 
+        output_errors: output/fwd_errors.json
+            
+  - step: Save checkpoint after snowballing
+    builtin.checkpoint:
 
   - step: Export database to BibTeX format
     builtin.export:

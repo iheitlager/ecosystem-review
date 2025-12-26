@@ -46,50 +46,18 @@ steps:
     builtin.load_files:
       file_path: "data/pdf"
       store_path: "output/pdf"
-      expected_count: 3
+      expected_count: 1
+      limit: 1
+      randomize: true
 
-  - step: Patch some records
-    builtin.patch:
-      patches:
-        - doi: "10.1080/10864415.2024.2332047"
-          replace_fields:
-            abstract: "blabla"
-          append_fields:
-            keywords:
-              - "new-keyword"
-
-  # - step: Import sample BibTeX files from second source
-  #   builtin.bibtex_import:
-  #     batch_id: "import_test_20241209"
-  #     imports:
-  #       - name: "Scopus Dataset"
-  #         file_path: "./output/papers_export.bib"
-  #         source_type: "other"
-  #         fix_cite_key: true
-  #         expected_count: 5
-
-  # - step: "Dump database contents"
-  #   builtin.dump_db:
-
-  # - step: Deduplicate papers using multiple matching methods
-  #   builtin.deduplication:
-  #     methods:
-  #       - method: "doi_exact"
-  #         priority: 1
-  #       - method: "title_author_fuzzy"
-  #         priority: 2
-  #         threshold: 0.90
-  #       - method: "title_fuzzy"
-  #         priority: 3
-  #         threshold: 0.95
 
   - step: "Get the full details"
     builtin.retrieve_metadata:
       methods:
+        - manual
+        - openalex
         - crossref
       overwrite: true
-
-
 
   # Expansion configuration (snowballing) 
   - step: Snowball first selection
@@ -102,19 +70,18 @@ steps:
         citations: 
           - "crossref"
         details:
+          - manual
           - "crossref" 
           - "openalex"
         limit: 10
         output_errors: output/errors.json
 
-
-  # - step: "Dump database contents"
-  #   builtin.dump_db:
-  #     citations:
-
   - step: Display screening results
     builtin.summarize:
       screening: true
+
+  - step: "Harmonize cite_keys"
+    builtin.fix_cite_keys:
 
   - step: Export database to JSONL format
     builtin.export:
@@ -131,3 +98,12 @@ steps:
       output_path: "./output/papers_export.bib"
       duplicates: false
       overwrite: true
+
+  - step: Upload to PostgreSQL
+    builtin.upload_database:
+      db_username: "$DB_USER"
+      db_password: "$DB_PASSWORD"
+      db_host: "$DB_HOST"
+      db_port: "$DB_PORT"
+      db_name: "$DB_NAME"
+      conflict_strategy: "update"

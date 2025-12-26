@@ -42,62 +42,156 @@ search:
 
 # Import configuration - using local test data
 steps:
-  - step: Load a review paper 
-    builtin.paper:
-      papers:
-        - doi: 10.1016/j.technovation.2025.103396
-          article-type: journal_article
+  # - step: Load some files from folder
+  #   builtin.load_files:
+  #     file_path: "./data/pdf"
+  #     store_path: "./output/pdf"
+
+  # - step: Import sample BibTeX files from different sources
+  #   builtin.bibtex_import:
+  #     batch_id: "import_test_20241209"
+  #     imports:
+  #       - name: "Scopus Dataset"
+  #         file_path: "data/bib/scopus.bib"
+  #         source_type: "scopus"
+  #         fix_cite_key: true
+  #         expected_count: 19
+
+        # - name: "IEEE Dataset"
+        #   file_path: "data/bib/ieee.bib"
+        #   source_type: "ieee_xplore"
+        #   expected_count: 20
+          
+        # - name: "Web of Science Dataset"
+        #   file_path: "data/bib/wos.bib"
+        #   source_type: "web_of_science"
+        #   expected_count: 20
+
+
+  - step: Load some files from folder
+    builtin.load_files:
+      file_path: "../../wc/papers"
+      store_path: "output/pdf3"
+
 
   - step: "Get the full details"
     builtin.retrieve_metadata:
       methods:
+        - manual
         - openalex
-      overwrite: true
+        - crossref
+      overwrite: false
 
-  # Expansion configuration (snowballing) 
-  - step: Snowball database selection
-    builtin.citations:
+  - step: "Harmonize cite_key"
+    builtin.fix_cite_keys:
 
-      # Backward citations 
-      backward: 
-        paper-types:
-          - "journal_article"    
-        limit: 15
-        citations: 
-          - "crossref"
-        details:
-          - "crossref" 
-          - "openalex"
-        output_errors: output/errors.json
 
-  - step: Download pdfs
-    builtin.download_pdfs:
-      max_retries: 3
-      timeout: 30
-      store_path: "output/pdf"
-      sources:
-        # - "unpaywall"
-        # - "core"
-        - "openalex"
-      output_errors: output/pdf_errors.json
+  - step: Categorize and screen papers for quality
+    builtin.categorization:
+      exclude_types: true
+      exclude_reviews: true
+
+  - step: Keyword-based screening
+    builtin.keyword_screening:
+      # Hard exclusion keywords (if found, exclude immediately)
+      exclusion_keywords:
+        domains:
+          - "medical"
+          - "healthcare"
+          - "patient"
+          - "disease"
+          - "clinical"
+          - "pharmaceutical"
+          - "drug"
+        other:
+          - "agriculture"
+          - "farming"
+          - "crop"
+          - "education"
+          - "classroom"
+          - "student"
+          - "military"
+          - "weapon"
+          - "consumer behavior"
+          - "retail customer"
+      
+      # Inclusion keywords (need matches)
+      inclusion_keywords:
+        innovation:
+          - "digital innovation"
+          - "digitalization"
+          - "digitization"
+          - "digital transformation"
+          - "technology adoption"
+          - "platform"
+          - "ecosystem"
+        organization:
+          - "firm"
+          - "company"
+          - "organization"
+          - "enterprise"
+          - "incumbent"
+          - "business"
+        collaboration:
+          - "supplier"
+          - "vendor"
+          - "partner"
+          - "service provider"
+          - "provider"
+          - "collaboration"
+          - "co-creation"
+
+  - step: Semantic screening based on research question
+    builtin.semantic_screening:
+      model: "all-mpnet-base-v2"
+      thresholds:
+        auto_include: 0.65
+        manual_review: 0.50
+        auto_exclude: 0.50
+  # # Expansion configuration (snowballing) 
+  # - step: Snowball database selection
+  #   builtin.citations:
+
+  #     # Backward citations 
+  #     backward: 
+  #       paper-types:
+  #         - "journal_article"    
+  #       limit: 15
+  #       citations: 
+  #         - "crossref"
+  #       details:
+  #         - "crossref" 
+  #         - "openalex"
+  #       output_errors: output/errors.json
+
+  # - step: Download pdfs
+  #   builtin.download_pdfs:
+  #     max_retries: 3
+  #     timeout: 30
+  #     store_path: "output/pdf"
+  #     sources:
+  #       # - "unpaywall"
+  #       # - "core"
+  #       - "openalex"
+  #     output_errors: output/pdf_errors.json
 
   - step: "Dump database contents"
     builtin.dump_db:
-      citations:
+      bibliography:
 
-  - step: "Explain totals"
-    builtin.summarize:
-      summary: true
-      bibliography: true
+  # - step: "Explain totals"
+  #   builtin.summarize:
+  #     summary: true
+  #     bibliography: true
 
-  - step: Export database to JSONL format
-    builtin.export:
-      format: jsonl
-      # output: stdout
-      output_path: "./output/papers_test.jsonl"
-      exclude_none: true
-      duplicates: false
-      overwrite: true
+  # - step: Export database to JSONL format
+  #   builtin.export:
+  #     format: jsonl
+  #     # output: stdout
+  #     output_path: "./output/papers_test.jsonl"
+  #     exclude_none: true
+  #     duplicates: false
+  #     overwrite: true
 
   - step: Export database to BibTeX format
     builtin.export:
@@ -105,3 +199,12 @@ steps:
       output_path: "./output/papers_test.bib"
       duplicates: false
       overwrite: true
+
+  - step: Upload to PostgreSQL
+    builtin.upload_database:
+      db_username: "$DB_USER"
+      db_password: "$DB_PASSWORD"
+      db_host: "$DB_HOST"
+      db_port: "$DB_PORT"
+      db_name: "$DB_NAME"
+      conflict_strategy: "update"

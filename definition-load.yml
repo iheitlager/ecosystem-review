@@ -4,11 +4,11 @@
 
 # Project metadata
 project:
-  name: "Digital Innovation Review"
+  name: "Supplier Digital Innovation Review"
   description: "Systematic literature review on supplier involvement in digital innovation"
   researcher: "Ilja Heitlager"
-  email: "i.heitlager@tue.nl"
   institution: "TU Eindhoven"
+  email: "i.heitlager@tue.nl"
   start_date: "2024-01-15"
   research_question: "How do incumbent firms involve suppliers in digital innovation processes?"
 
@@ -40,74 +40,60 @@ search:
     - web_of_science
     - ieee_xplore
 
+
 # Import configuration - using local test data
 steps:
   - step: Import sample BibTeX files from different sources
     builtin.bibtex_import:
-      # limit: 25
-      # randomize: true
-      imports:        
+      batch_id: "import_test_20241209"
+      imports:
         - name: "Scopus Dataset"
           file_path: "data/bib/scopus.bib"
           source_type: "scopus"
-          fix_cite_key: false
+          fix_cite_key: true
           expected_count: 19
 
-  - step: "Get the full details"
-    builtin.retrieve_metadata:
+        - name: "IEEE Dataset"
+          file_path: "data/bib/ieee.bib"
+          source_type: "ieee_xplore"
+          expected_count: 20
+          
+        - name: "Web of Science Dataset"
+          file_path: "data/bib/wos.bib"
+          source_type: "web_of_science"
+          expected_count: 20
+
+  - step: "Intermediate message"
+    builtin.echo:
+      message: "Processing complete - bibtex imported"
+
+  - step: Save checkpoint after import
+    builtin.checkpoint:
+
+  - step: Deduplicate papers using multiple matching methods
+    builtin.deduplication:
       methods:
-        - openalex
-      overwrite: false
+        - method: "doi_exact"
+          priority: 1
+        - method: "title_author_fuzzy"
+          priority: 2
+          threshold: 0.90
+        - method: "title_fuzzy"
+          priority: 3
+          threshold: 0.95
 
-  - step: Download pdfs
-    builtin.download_pdfs:
-      timeout: 30
-      store_path: "output/pdf2"
-      sources:
-        # - "unpaywall"
-        - "publisher"
-        # - "core"
-        # - "openalex"
-      output_errors: output/pdf_errors_openalex.json
+  - step: Save checkpoint after deduplication
+    builtin.checkpoint:
 
-  - step: Export database to BibTeX format
+  - step: Display screening results
+    builtin.summarize:
+      screening: true
+      bibliography: true
+
+
+  - step: Export no DOI database to BibTeX format
     builtin.export:
       format: bibtex
-      output_path: "./output/papers_test_openalex.bib"
-      duplicates: false
+      output_path: "./output/papers_no_doi.bib"
+      doi: none
       overwrite: true
-
-  # # Expansion configuration (snowballing) 
-  # - step: Snowball database selection
-  #   builtin.citations:
-
-  #     # Backward citations 
-  #     backward: 
-  #       paper-types:
-  #         - "journal_article"    
-  #       limit: 15
-  #       citations: 
-  #         - "crossref"
-  #       details:
-  #         - "crossref" 
-  #         - "openalex"
-  #       output_errors: output/errors.json
-
-  # - step: "Dump database contents"
-  #   builtin.dump_db:
-  #     citations:
-
-  # - step: "Explain totals"
-  #   builtin.summarize:
-  #     summary: true
-  #     bibliography: true
-
-  # - step: Export database to JSONL format
-  #   builtin.export:
-  #     format: jsonl
-  #     # output: stdout
-  #     output_path: "./output/papers_test.jsonl"
-  #     exclude_none: true
-  #     duplicates: false
-  #     overwrite: true
-

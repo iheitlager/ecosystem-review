@@ -42,38 +42,45 @@ search:
 
 # Import configuration - using local test data
 steps:
-  - step: Load a review paper 
-    builtin.paper:
-      papers:
-        - doi: 10.1186/s13731-024-00404-5
-        # - doi: 10.5465/amr.2018.0285
-          article-type: journal_article
+  - step: Import sample BibTeX files from different sources
+    builtin.bibtex_import:
+      imports:        
+        - name: "Scopus Dataset"
+          file_path: "data/bib/scopus.bib"
+          source_type: "scopus"
+          fix_cite_key: true
+        - name: "WOS Dataset"
+          file_path: "data/bib/wos.bib"
+          source_type: "web_of_science"
+          fix_cite_key: true
 
-  - step: "Get the full details"
-    builtin.retrieve_metadata:
-      methods:
-        - crossref
-      overwrite: false
+  - step: "Harmonize cite_key"
+    builtin.fix_cite_keys:
+  # - step: Snowball first selection
+  #   builtin.citations:
+  #     # Backward citations 
+  #     backward: 
+  #       paper-types:
+  #         - "journal_article"      
+  #       # Reference extraction methods (in priority order) 
+  #       citations: 
+  #         - "crossref"
+  #       details:
+  #         - "crossref" 
+  #         - "openalex"
+  #       limit: 10
+  #       output_errors: output/errors.json
+  # - step: "Get the full details"
+  #   builtin.retrieve_metadata:
+  #     methods:
+  #       - openalex
+  #     overwrite: false
 
-  # Expansion configuration (snowballing) 
-  - step: Snowball forward references
-    builtin.citations:
-
-      # Forward citations 
-      forward: 
-        paper-types:
-          - "journal_article"    
-        limit: 15
-        citations: 
-          - "openalex"
-        details:
-          - "crossref" 
-        output_errors: output/fwd_errors.json
-
-
-  - step: Export database to BibTeX format
-    builtin.export:
-      format: bibtex
-      output_path: "./output/papers_fwd.bib"
-      duplicates: false
-      overwrite: true
+  - step: Upload to PostgreSQL
+    builtin.upload_database:
+      db_username: "$DB_USER"
+      db_password: "$DB_PASSWORD"
+      db_host: "$DB_HOST"
+      db_port: "$DB_PORT"
+      db_name: "$DB_NAME"
+      conflict_strategy: "skip"
