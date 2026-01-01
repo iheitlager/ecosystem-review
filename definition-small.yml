@@ -40,16 +40,140 @@ search:
     - web_of_science
     - ieee_xplore
 
+# ============================================================================
+# Templates
+# ============================================================================
+templates:
+  - template: "screen_basics"
+    steps:
+      - step: "Metadata screening - test tri-state logic"
+        description: |
+          Screening logic: 
+          - Listed values: hard EXCLUDE (must NOT have)
+          - NOT: prefix hard EXCLUDE (must NOT have - exclude everything except this)
+          - Omitted: no requirement (leave aside)
+        enabled: true
+        builtin.metadata_screening:
+          # Hard excludes using NOT operator and direct exclusions
+          exclude:
+            language:
+              # Exclude everything that is NOT English (hard exclude non-English)
+              - NOT: "en"
+            paper_types:
+              # Exclude everything that is NOT journal_article
+              - NOT: "journal_article"
+            quality_tier:
+              # Exclude low quality papers
+              - NOT: "peer_reviewed_journal"
+              - NOT: "non_peer_reviewed_article" # like arxiv"low"
+
+      - step: "Keyword screening - exclude editorials, conceptual, theoretical"
+        description: "Exclude papers based on keywords"
+        builtin.keyword_screening:
+          mode: "inclusion_required"  # Both gates must pass
+
+          # Alternative modes:
+          # mode: "exclusion_only"    # Just filter out off-topic domains
+          # mode: "soft"              # Keywords for ranking, no filtering      
+          exclude:
+            keywords: # these are hard rejects
+              scope:
+                - "sme*s"
+              domains:
+                - "medical"
+                - "healthcare"
+                - "patient"
+                - "disease"
+                - "clinical"
+                - "pharmaceutical"
+                - "drug"
+              other:
+                - "agriculture"
+                - "farming"
+                - "crop"
+                - "education"
+                - "classroom"
+                - "student"
+                - "military"
+                - "weapon"
+                - "consumer behavior"
+                - "retail customer"
+            study_types: # this is implicitly defined
+              # Direct exclusions (hard exclude these study types)
+              - "editorial"
+              - "conceptual"
+              - "theoretical"
+              - "literature_review"
+          include:
+            thresholds: 
+              auto_accept: 0.65      # Strong keyword match (need at least two categories
+              manual_review: 0.40    # Weak match → semantic screening
+              auto_reject: null      # Never auto-reject by keywords alone
+              # score will be normalized over categories
+            keywords:
+              innovation:
+                - "digital*" # all variations
+                - "digital innovation" # capture combined words
+                - "digitiz*"
+                - "digital transformation"
+                - "technology adoption"
+                - "platform"
+                - "ecosystem"
+              organization:
+                - "firm"
+                - "company"
+                - "organization"
+                - "enterprise"
+                - "incumbent"
+                - "business"
+                - "ecosystem"
+                - "network"
+              collaboration:
+                - "supplier*"
+                - "vendor*"
+                - "partner*"
+                - "service provider*"
+                - "provider*"
+                - "collaboration"
+                - "co-creat*"
+
+      - step: "Semantic screening based on research question"
+        description: "Use semantic similarity to screen papers based on research question"
+        builtin.rocchio_screening:
+          model: "sentence-transformers/allenai-specter"
+          rocchio_weights:
+            alpha: 1.0
+            beta: 0.75
+            gamma: 0.15
+          thresholds:
+            accept: 0.85
+            rejectw: 0.4
+          initialize_from_keyword_screening: true
+
+      # - step: Semantic screening based on research question
+      #   builtin.semantic_screening:
+      #     model: "all-mpnet-base-v2"
+      #     thresholds:
+      #       auto_include: 0.60
+      #       manual_review: 0.25
+      #       auto_exclude: 0.25
+
+# ============================================================================
 # Import configuration - using local test data
+# ============================================================================
 steps:
   - step: Load some files from folder
     builtin.load_files:
-      file_path: "data/pdf"
+      file_path: "data/pdf_small"
       store_path: "output/pdf"
       expected_count: 1
-      limit: 1
+      limit: 10
       randomize: true
 
+  - step: Import sample BibTeX files from different sources
+    builtin.bibtex_import:
+      file_path: "data/bib/first_selection.bib"
+      source_type: "web_of_science"
 
   - step: "Get the full details"
     builtin.retrieve_metadata:
@@ -57,28 +181,56 @@ steps:
         - manual
         - openalex
         - crossref
-      overwrite: true
+      overwrite: false
 
-  # Expansion configuration (snowballing) 
-  - step: Snowball first selection
+  - step: Deduplicate papers using multiple matching methods
+    builtin.deduplication:
+      methods:
+        - method: "doi_exact"
+        - method: "title_author_fuzzy"
+          threshold: 0.90
+        - method: "title_fuzzy"
+          threshold: 0.95
+
+  - step: "First screening of loaded papers"
+    description: "Screen loaded papers based on basic criteria" 
+    builtin.run-template:
+      template: "screen_basics"
+
+    # Do them before backkward so that forward references are taken into account with backward snowballing
+  - step: Snowball forward references
     builtin.citations:
+      forward: 
+        year: 2023
+        paper-types:
+          - "journal_article"    
+        screening: "screen_basics"
+        citations: 
+          - "openalex"
+        details:
+          - manual
+          - openalex
+          - "crossref" 
+        output_errors: output/fwd_errors.json
+
+  - step: Snowball backward citations selection
+    description: "Snowballing - backward citations" 
+    builtin.citations:
+      # limit: 10     
       # Backward citations 
       backward: 
         paper-types:
-          - "journal_article"      
+          - "journal_article" 
+        iterations: 2
+        screening: "screen_basics"
         # Reference extraction methods (in priority order) 
         citations: 
-          - "crossref"
+          - crossref
         details:
           - manual
-          - "crossref" 
-          - "openalex"
-        limit: 10
+          - crossref 
+          - openalex
         output_errors: output/errors.json
-
-  - step: Display screening results
-    builtin.summarize:
-      screening: true
 
   - step: "Harmonize cite_keys"
     builtin.fix_cite_keys:
@@ -99,11 +251,11 @@ steps:
       duplicates: false
       overwrite: true
 
-  - step: Upload to PostgreSQL
-    builtin.upload_database:
-      db_username: "$DB_USER"
-      db_password: "$DB_PASSWORD"
-      db_host: "$DB_HOST"
-      db_port: "$DB_PORT"
-      db_name: "$DB_NAME"
-      conflict_strategy: "update"
+  # - step: Upload to PostgreSQL
+  #   builtin.upload_database:
+  #     db_username: "$DB_USER"
+  #     db_password: "$DB_PASSWORD"
+  #     db_host: "$DB_HOST"
+  #     db_port: "$DB_PORT"
+  #     db_name: "$DB_NAME"
+  #     conflict_strategy: "update"

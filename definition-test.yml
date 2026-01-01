@@ -40,39 +40,95 @@ search:
     - web_of_science
     - ieee_xplore
 
+templates:
+  - template: "screen_basics"
+    steps:
+    - step: Deduplicate papers using multiple matching methods
+      builtin.deduplication:
+        methods:
+          - method: "doi_exact"
+            priority: 1
+          - method: "title_author_fuzzy"
+            priority: 2
+            threshold: 0.90
+          - method: "title_fuzzy"
+            priority: 3
+            threshold: 0.95
+
+
+
+    - step: Categorize and screen papers for quality
+      builtin.categorization:
+        exclude_types: true
+        exclude_reviews: true
+
+    - step: Keyword-based screening
+      builtin.keyword_screening:
+        # Hard exclusion keywords (if found, exclude immediately)
+        exclusion_keywords:
+          domains:
+            - "medical"
+            - "healthcare"
+            - "patient"
+            - "disease"
+            - "clinical"
+            - "pharmaceutical"
+            - "drug"
+          other:
+            - "agriculture"
+            - "farming"
+            - "crop"
+            - "education"
+            - "classroom"
+            - "student"
+            - "military"
+            - "weapon"
+            - "consumer behavior"
+            - "retail customer"
+        
+        # Inclusion keywords (need matches)
+        inclusion_keywords:
+          innovation:
+            - "digital innovation"
+            - "digitalization"
+            - "digitization"
+            - "digital transformation"
+            - "technology adoption"
+            - "platform"
+            - "ecosystem"
+          organization:
+            - "firm"
+            - "company"
+            - "organization"
+            - "enterprise"
+            - "incumbent"
+            - "business"
+          collaboration:
+            - "supplier"
+            - "vendor"
+            - "partner"
+            - "service provider"
+            - "provider"
+            - "collaboration"
+            - "co-creation"
+
+    - step: Semantic screening based on research question
+      builtin.semantic_screening:
+        model: "all-mpnet-base-v2"
+        thresholds:
+          auto_include: 0.65
+          manual_review: 0.50
+          auto_exclude: 0.50
+
 # Import configuration - using local test data
 steps:
-  # - step: Load some files from folder
-  #   builtin.load_files:
-  #     file_path: "./data/pdf"
-  #     store_path: "./output/pdf"
-
-  # - step: Import sample BibTeX files from different sources
-  #   builtin.bibtex_import:
-  #     batch_id: "import_test_20241209"
-  #     imports:
-  #       - name: "Scopus Dataset"
-  #         file_path: "data/bib/scopus.bib"
-  #         source_type: "scopus"
-  #         fix_cite_key: true
-  #         expected_count: 19
-
-        # - name: "IEEE Dataset"
-        #   file_path: "data/bib/ieee.bib"
-        #   source_type: "ieee_xplore"
-        #   expected_count: 20
-          
-        # - name: "Web of Science Dataset"
-        #   file_path: "data/bib/wos.bib"
-        #   source_type: "web_of_science"
-        #   expected_count: 20
-
-
   - step: Load some files from folder
     builtin.load_files:
-      file_path: "../../wc/papers"
-      store_path: "output/pdf3"
-
+      file_path: "data/pdf_small"
+      store_path: "output/pdf"
+      expected_count: 1
+      limit: 5
+      randomize: true
 
   - step: "Get the full details"
     builtin.retrieve_metadata:
@@ -82,102 +138,22 @@ steps:
         - crossref
       overwrite: false
 
-  - step: "Harmonize cite_key"
-    builtin.fix_cite_keys:
-
-
-  - step: Categorize and screen papers for quality
-    builtin.categorization:
-      exclude_types: true
-      exclude_reviews: true
-
-  - step: Keyword-based screening
-    builtin.keyword_screening:
-      # Hard exclusion keywords (if found, exclude immediately)
-      exclusion_keywords:
-        domains:
-          - "medical"
-          - "healthcare"
-          - "patient"
-          - "disease"
-          - "clinical"
-          - "pharmaceutical"
-          - "drug"
-        other:
-          - "agriculture"
-          - "farming"
-          - "crop"
-          - "education"
-          - "classroom"
-          - "student"
-          - "military"
-          - "weapon"
-          - "consumer behavior"
-          - "retail customer"
-      
-      # Inclusion keywords (need matches)
-      inclusion_keywords:
-        innovation:
-          - "digital innovation"
-          - "digitalization"
-          - "digitization"
-          - "digital transformation"
-          - "technology adoption"
-          - "platform"
-          - "ecosystem"
-        organization:
-          - "firm"
-          - "company"
-          - "organization"
-          - "enterprise"
-          - "incumbent"
-          - "business"
-        collaboration:
-          - "supplier"
-          - "vendor"
-          - "partner"
-          - "service provider"
-          - "provider"
-          - "collaboration"
-          - "co-creation"
-
-  - step: Semantic screening based on research question
-    builtin.semantic_screening:
-      model: "all-mpnet-base-v2"
-      thresholds:
-        auto_include: 0.65
-        manual_review: 0.50
-        auto_exclude: 0.50
-  # # Expansion configuration (snowballing) 
-  # - step: Snowball database selection
-  #   builtin.citations:
-
-  #     # Backward citations 
-  #     backward: 
-  #       paper-types:
-  #         - "journal_article"    
-  #       limit: 15
-  #       citations: 
-  #         - "crossref"
-  #       details:
-  #         - "crossref" 
-  #         - "openalex"
-  #       output_errors: output/errors.json
-
-  # - step: Download pdfs
-  #   builtin.download_pdfs:
-  #     max_retries: 3
-  #     timeout: 30
-  #     store_path: "output/pdf"
-  #     sources:
-  #       # - "unpaywall"
-  #       # - "core"
-  #       - "openalex"
-  #     output_errors: output/pdf_errors.json
-
-  - step: "Dump database contents"
-    builtin.dump_db:
-      bibliography:
+  # Expansion configuration (snowballing) 
+  - step: Snowball first selection
+    builtin.citations:
+      # Backward citations 
+      backward: 
+        paper-types:
+          - "journal_article"      
+        # Reference extraction methods (in priority order) 
+        citations: 
+          - "crossref"
+        details:
+          - manual
+          - "crossref" 
+          - "openalex"
+        limit: 10
+        output_errors: output/errors.json
 
   # - step: "Explain totals"
   #   builtin.summarize:
