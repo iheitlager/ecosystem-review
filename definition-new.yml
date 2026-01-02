@@ -10,7 +10,20 @@ project:
   email: "i.heitlager@tue.nl"
   institution: "TU Eindhoven"
   start_date: "2024-01-15"
-  research_question: "How do incumbent firms involve suppliers in digital innovation processes?"
+  # This is some careful investigation of claude on the research goal
+  research_question: |
+    What mechanisms enable incumbent organizations to orchestrate external supplier 
+    ecosystems for strategic advantage in pursuing digital innovation initiatives, 
+    and how do boundary-spanning coordination capabilities affect the depth, pace, 
+    and sustainability of digital transformation outcomes across organizational 
+    and technological boundaries?
+  
+  research_dimensions:
+    - "Incumbent firm strategies for supplier ecosystem engagement"
+    - "Ecosystem orchestration and digital transformation outcomes"
+    - "Boundary-spanning capabilities in multi-supplier coordination"
+    - "Supplier coordination as source of competitive advantage"
+    - "Risk management in supplier-led digital transformation"
 
 # Database configuration
 database:
@@ -40,6 +53,9 @@ search:
     - web_of_science
     - ieee_xplore
 
+# ============================================================================
+# Templates
+# ============================================================================
 templates:
   - template: "screen_basics"
     steps:
@@ -68,6 +84,7 @@ templates:
         description: "Exclude papers based on keywords"
         builtin.keyword_screening:
           mode: "inclusion_required"  # Both gates must pass
+          complete: strict # must have title/abstract/keywords
 
           # Alternative modes:
           # mode: "exclusion_only"    # Just filter out off-topic domains
@@ -103,50 +120,74 @@ templates:
               - "literature_review"
           include:
             thresholds: 
-              auto_accept: 0.65      # Strong keyword match (need at least two categories
+              auto_accept: 0.65      # Strong keyword match (need at least two categories)
               manual_review: 0.40    # Weak match → semantic screening
-              auto_reject: null      # Never auto-reject by keywords alone
               # score will be normalized over categories
             keywords:
               innovation:
-                - "digital*" # all variations
-                - "digital innovation" # capture combined words
-                - "digitiz*"
+                # - "digital*" # all variations
+                # - "digital innovation" # capture combined words
+                # - "digitiz*"
                 - "digital transformation"
                 - "technology adoption"
-                - "platform"
-                - "ecosystem"
+                - "digital adoption"
+                - "technology integration"
+                # - "platform"
+                # - "ecosystem"
               organization:
                 - "firm"
                 - "company"
                 - "organization"
                 - "enterprise"
                 - "incumbent"
-                - "business"
-                - "ecosystem"
-                - "network"
+                # - "business"
+                # - "ecosystem"
+                # - "network"
               collaboration:
                 - "supplier*"
                 - "vendor*"
                 - "partner*"
-                - "service provider*"
-                - "provider*"
-                - "collaboration"
-                - "co-creat*"
+                # - "service provider*"
+                # - "provider*"
+                # - "collaboration"
+                # - "co-creat*"
 
+  - template: "rocchio_screening"
+    steps:
       - step: "Semantic screening based on research question"
         description: "Use semantic similarity to screen papers based on research question"
         builtin.rocchio_screening:
           model: "sentence-transformers/allenai-specter"
+
+          # Use both primary question and dimensions for richer embedding
+          use_research_dimensions: true
+          dimension_weight: 0.3  # Weight dimensions at 30%, primary at 70%          
+
           rocchio_weights:
             alpha: 1.0
             beta: 0.75
             gamma: 0.15
+
           thresholds:
-            accept: 0.90
-            reject: 0.5
+            accept: 0.75 #- 0.72 / 0.78
+            reject: 0.25 #- 0.28 / 0.22
+
           initialize_from_keyword_screening: true
 
+  - template: "complete_screening"
+    description: "Complete screening workflow combining keyword and semantic screening"
+    steps:
+      - step: "Keyword screening - exclude editorials, conceptual, theoretical"
+        builtin.run-template:
+          template: "screen_basics"
+      - step: "Semantic screening based on research question"
+        builtin.run-template:
+          template: "rocchio_screening"
+
+
+# ============================================================================
+# Actual workflow definition
+# ============================================================================
 # Import configuration - using local test data
 steps:
   - step: Import ProQuest papers
@@ -164,22 +205,15 @@ steps:
       file_path: "data/bib/wos_20251231.bib"
       source_type: "web_of_science"
 
-  # - step: Deduplicate papers using multiple matching methods
-  #   builtin.deduplication:
-  #     methods:
-  #       - method: "doi_exact"
-  #         priority: 1
-  #       - method: "title_author_fuzzy"
-  #         priority: 2
-  #         threshold: 0.90
-  #       - method: "title_fuzzy"
-  #         priority: 3
-  #         threshold: 0.95
-
   - step: "First screening of loaded papers"
     description: "Screen loaded papers based on basic criteria" 
     builtin.run-template:
       template: "screen_basics"
+
+  - step: "Semantic screening of loaded papers"
+    description: "Screen loaded papers based on basic criteria" 
+    builtin.run-template:
+      template: "rocchio_screening"
 
   - step: Snowball forward references
     builtin.citations:
@@ -187,7 +221,7 @@ steps:
         year: 2024
         paper-types:
           - "journal_article"    
-        screening: "screen_basics"
+        screening: "complete_screening"
         citations: 
           - "openalex"
         details:
