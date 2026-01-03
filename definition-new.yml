@@ -10,6 +10,7 @@ project:
   email: "i.heitlager@tue.nl"
   institution: "TU Eindhoven"
   start_date: "2024-01-15"
+  # research_question: "How do incumbent firms involve suppliers in digital innovation processes?"
   # This is some careful investigation of claude on the research goal
   research_question: |
     What mechanisms enable incumbent organizations to orchestrate external supplier 
@@ -69,6 +70,7 @@ templates:
         builtin.metadata_screening:
           # Hard excludes using NOT operator and direct exclusions
           exclude:
+            doi_not_set: true
             language:
               # Exclude everything that is NOT English (hard exclude non-English)
               - NOT: "en"
@@ -92,7 +94,8 @@ templates:
           exclude:
             keywords: # these are hard rejects
               scope:
-                - "sme*s"
+                - "sme*"
+                - "family*"
               domains:
                 - "medical"
                 - "healthcare"
@@ -169,10 +172,10 @@ templates:
             gamma: 0.15
 
           thresholds:
-            accept: 0.75 #- 0.72 / 0.78
+            accept: 0.85 #- 0.72 / 0.78
             reject: 0.25 #- 0.28 / 0.22
 
-          initialize_from_keyword_screening: true
+          initialize_from_keyword_screening: false
 
   - template: "complete_screening"
     description: "Complete screening workflow combining keyword and semantic screening"
@@ -191,16 +194,20 @@ templates:
 # Import configuration - using local test data
 steps:
   - step: Import ProQuest papers
+    description: "Import papers from local ProQuest export file from 2025-12-31 "
+    enabled: false
     builtin.ris_import:
       file_path: "data/ris/proquest_20251231.ris"
       source_database: "proquest"
   - step: Import full database from IEEE Xplore export
     description: "Import papers from local IEEE Xplore export file from 2025-12-31 "
+    enabled: true
     builtin.bibtex_import:
       file_path: "data/bib/ieee_20251231.bib"
       source_type: "ieee_xplore"
   - step: Import full database from Web of Science export
     description: "Import papers from local Web of Science export file from 2025-12-31 "
+    enabled: false
     builtin.bibtex_import:
       file_path: "data/bib/wos_20251231.bib"
       source_type: "web_of_science"
@@ -211,11 +218,30 @@ steps:
       template: "screen_basics"
 
   - step: "Semantic screening of loaded papers"
+    enabled: false
     description: "Screen loaded papers based on basic criteria" 
     builtin.run-template:
       template: "rocchio_screening"
 
+  - step: "LLM based classification"
+    enabled: false
+    builtin.llm_classification:
+      # model: "claude-opus-4-20250514"
+      model: "claude-haiku-4-5-20251001"
+      thresholds:
+        auto_include: 0.75
+        manual_review: 0.55
+        auto_exclude: 0.40
+
+  - step: "Rocchio Classification"
+    enabled: true
+    builtin.rocchio_classifier:
+      model: "all-mpnet-base-v2"              # Embedding model
+      dimension_threshold: 0.5                 # Similarity threshold
+      initialize_from_research_question: true  # Use RQ for centroid initialization
+
   - step: Snowball forward references
+    enabled: false
     builtin.citations:
       forward: 
         year: 2024
@@ -229,3 +255,11 @@ steps:
           - openalex
           - "crossref" 
         output_errors: output/fwd_errors.json
+
+  - step: Export database to BibTeX format
+    builtin.export:
+      format: bibtex
+      output_path: "./output/papers_new.bib"
+      includes: only
+      duplicates: false
+      overwrite: true
