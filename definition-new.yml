@@ -233,7 +233,7 @@ steps:
         manual_review: 0.55
         auto_exclude: 0.40
 
-  - step: "Rocchio Classification"
+  - step: "Rocchio classification"
     enabled: true
     builtin.rocchio_classifier:
       model: "all-mpnet-base-v2"              # Embedding model

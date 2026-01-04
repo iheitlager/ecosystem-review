@@ -122,52 +122,27 @@ templates:
 
 # Import configuration - using local test data
 steps:
-  - step: Load some files from folder
-    builtin.load_files:
-      file_path: "data/pdf_small"
+  - step: Import test papers
+    description: "Import papers from standard eight cases"
+    enabled: true
+    builtin.bibtex_import:
+      file_path: "data/bib_test/eight_cases.bib"
+      source_type: "other"
+
+  - step: Download pdfs
+    builtin.download_pdfs:
+      timeout: 30
       store_path: "output/pdf"
-      expected_count: 1
-      limit: 5
-      randomize: true
+      sources:
+        - "publisher"
+      output_errors: output/pdf_import_errors.json
 
-  - step: "Get the full details"
-    builtin.retrieve_metadata:
-      methods:
-        - manual
-        - openalex
-        - crossref
-      overwrite: false
-
-  # Expansion configuration (snowballing) 
-  - step: Snowball first selection
-    builtin.citations:
-      # Backward citations 
-      backward: 
-        paper-types:
-          - "journal_article"      
-        # Reference extraction methods (in priority order) 
-        citations: 
-          - "crossref"
-        details:
-          - manual
-          - "crossref" 
-          - "openalex"
-        limit: 10
-        output_errors: output/errors.json
-
-  # - step: "Explain totals"
-  #   builtin.summarize:
-  #     summary: true
-  #     bibliography: true
-
-  # - step: Export database to JSONL format
-  #   builtin.export:
-  #     format: jsonl
-  #     # output: stdout
-  #     output_path: "./output/papers_test.jsonl"
-  #     exclude_none: true
-  #     duplicates: false
-  #     overwrite: true
+  - step: Calculate embeddings for semantic screening
+    builtin.generate_embeddings:
+      # model: "all-mpnet-base-v2"
+      model: "sentence-transformers/allenai-specter"
+      device: "mps"
+      included_only: false
 
   - step: Export database to BibTeX format
     builtin.export:
