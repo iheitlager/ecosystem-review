@@ -245,28 +245,32 @@ In a positivist SLR, extraction captures "what the paper found." Here, extractio
 
 The coding scheme is built from the anomaly table in Phase 0. For each paper, we ask: does this paper address the anomaly? Does it explain any of the surprising behaviors? If not, why not — what assumption blocks it?
 
-### 4.1 Structured Extraction via Haiku
+### 4.1 Dual-Pass Extraction via Haiku
 
-**Tool:** paper-scanner `file_processor.py` with custom prompt
+**Tool:** paper-scanner `file_processor.py` with two prompts
 **Model:** claude-haiku-4-5 (batch)
 
-Extract per paper:
-
-**Standard fields:**
+**Pass 1 — Standard extraction** (existing paper-scanner prompt: `paper-summary.md`):
 - Title, authors, year, journal, DOI
 - Research question, methodology, sample/context
 - Key findings, limitations
+- CAMO framework (Context-Agency-Mechanism-Outcome) — retained as secondary extraction for empirical patterns
+- Theoretical frameworks used
 
-**CAMO framework:**
-- Context: industry, geography, firm type
-- Agency: who acts (supplier, client, platform owner, complementor)
-- Mechanism: how they act (capability building, coordination, governance)
-- Outcome: what results (innovation, performance, ecosystem health)
+**Pass 2 — Theoretical inadequacy coding** (new prompt: `prompts/theoretical-coding.md`):
+This is the primary coding for Paper 2. It captures what each paper ASSUMES, not just what it FINDS.
 
-**Theoretical coding (Paper 2 specific):**
-- **Supplier role characterization:** vendor / partner / orchestrator / steward / platform owner / other
-- **Theoretical lens:** TCE / RBV / DC / ecosystem / stewardship / agency / institutional / other
-- **Core assumption about suppliers:** opportunistic / neutral / benevolent / not discussed
+- **Theoretical lens:** primary and secondary streams (TCE, DC, ecosystem, stewardship, paradox, etc.)
+- **Supplier role:** vendor / partner / orchestrator / steward / platform owner / complementor / not discussed — plus the paper's own term
+- **Supplier motive assumed:** opportunistic / self-interested / neutral / collaborative / benevolent — with evidence quote
+- **Capability scope:** internal only / inter-organizational / meta-capabilities / not discussed
+- **Orchestration mode:** platform-based / contractual / relational / hierarchical / hybrid / not discussed
+- **Anomaly coverage:** for each of A1-A5, does the paper address / describe / contradict / stay silent? Score 0-5.
+- **Blocking assumption:** what theoretical assumption prevents this paper from explaining ecosystem stewardship?
+- **Nearest concept:** what concept comes closest? What does it miss?
+- **Evidence value:** gap evidence / partial support / mechanism support / counter-evidence / context only
+
+The anomaly coverage and blocking assumption fields directly build the thematic matrix and gap argument.
 - **Boundary-spanning:** does paper discuss cross-organizational capabilities? Y/N + description
 - **Ecosystem governance mode:** contractual / relational / platform-based / hybrid / not discussed
 - **Dynamic capability scope:** internal only / inter-organizational / meta (operates on others' capabilities) / not discussed
