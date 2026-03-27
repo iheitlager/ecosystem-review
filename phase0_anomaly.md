@@ -219,12 +219,13 @@ All concrete examples above come from SBP. This is sufficient for a *motivating 
 
 These firms may exhibit similar patterns but without insider access or published case data, naming them as evidence would be overclaiming. The honest framing: "firms that may exhibit similar patterns, flagged as empirical targets for Paper 3 (survey validation)."
 
-### Useful Contrasts (large firms — NOT stewards)
+### Structural Contrast: Platform vs. Non-Platform Orchestration
 
-- **Accenture** — platform orchestration with consulting lock-in. Builds proprietary methodologies. The contrast: Accenture orchestrates *through* platform ownership; SBP orchestrates *without* it.
-- **Capgemini** — Applied Innovation Exchange is co-creation, but within a lock-in model. Capabilities built are Capgemini-dependent, not client-independent.
+Large consulting/IT firms (Accenture, Capgemini, Infosys) operate as **platform orchestrators** — proprietary methodologies, tools, talent pools, and delivery frameworks create structural dependency as a side effect of scale. This is well-theorized in ecosystem literature (Gawer 2014).
 
-These contrasts sharpen the construct definition: Ecosystem Stewardship is not "being a good consulting firm." It's a specific configuration where the supplier builds client independence, not dependency.
+Mid-size specialist firms (SBP, potentially Xebia, Conclusion) orchestrate **without** platform ownership. The research question is not "who is better" but: **what governance mechanism replaces the platform when the orchestrator doesn't own one?** That's the theoretical gap.
+
+Note: the author is CIO at SBP. This is insider practitioner research (Brannick & Coghlan 2007). The position creates unique access to the phenomenon but also requires reflexivity about bias. The paper must acknowledge this explicitly and use the SLR as a counterweight — the literature review is independent of the author's firm.
 
 ---
 
