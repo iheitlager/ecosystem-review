@@ -13,8 +13,9 @@ The following table maps observed behaviors to the specific theoretical assumpti
 | A3 | Supplier resolves client's internal paradoxes from outside | Paradox theory (Smith & Lewis 2011) | Organizational tensions must be resolved internally by management | Strong (2 cases) |
 | A4 | Supplier orchestrates multi-vendor ecosystem without owning the platform | Ecosystem theory (Gawer 2014; Jacobides et al. 2018) | Orchestration requires platform ownership or contractual authority | Moderate (2 cases) |
 | A5 | Supplier acts as steward of client interests, not just agent | Stewardship theory (Davis et al. 1997) | Stewardship is intra-firm (managers acting as stewards of owners) | Strong (theoretical) + emerging (demonstrated) |
-| A6 | Supplier conducts embedded research inside client to generate shared theory | RBV (Barney 1991) | Firms protect proprietary knowledge as competitive advantage | Strong (2 cases) |
-| A7 | Supplier creates public knowledge infrastructure clients can use independently | RBV; TCE | Suppliers build lock-in, not portability | Strong (3 cases) |
+
+
+*A6 and A7 from earlier analysis (research partnership, public infrastructure) are folded into A1 and A5 as supporting evidence — they are consequences of stewardship behavior, not separate anomaly types. The RBV violations they represent are real but secondary to the core theoretical pillars (TCE, DC, Ecosystem, Stewardship, Paradox).*
 
 ---
 
@@ -207,34 +208,83 @@ Suppliers typically create proprietary maturity models to lock in consulting rev
 
 ---
 
+## Generalizability: Beyond SBP
+
+All concrete examples above come from SBP. This is sufficient for a *motivating case* — establishing that the phenomenon is real — but insufficient for claiming generality. The paper needs to address this honestly.
+
+### Candidate Firms (Dutch, mid-size, similar profile)
+
+- **Xebia** — knowledge-sharing model (Xebia Academy, open conferences, methodology transfer). Builds client capabilities beyond contract scope. Federated structure with specialized practices. *Candidate for stewardship behavior — unverified.*
+- **Conclusion** — federated model with specialized units, "work with" culture. Similar scale and philosophy to SBP. *Candidate — unverified.*
+
+These firms may exhibit similar patterns but without insider access or published case data, naming them as evidence would be overclaiming. The honest framing: "firms that may exhibit similar patterns, flagged as empirical targets for Paper 3 (survey validation)."
+
+### Useful Contrasts (large firms — NOT stewards)
+
+- **Accenture** — platform orchestration with consulting lock-in. Builds proprietary methodologies. The contrast: Accenture orchestrates *through* platform ownership; SBP orchestrates *without* it.
+- **Capgemini** — Applied Innovation Exchange is co-creation, but within a lock-in model. Capabilities built are Capgemini-dependent, not client-independent.
+
+These contrasts sharpen the construct definition: Ecosystem Stewardship is not "being a good consulting firm." It's a specific configuration where the supplier builds client independence, not dependency.
+
+---
+
+## The Gap: Empirical vs. Theoretical
+
+A critical distinction for the abductive argument:
+
+**Empirical gap** = "nobody has observed this behavior."
+**Theoretical gap** = "the behavior has been observed but no theory explains it."
+
+The SLR will NOT find an empty cell. It will find papers that:
+
+1. **Describe** suppliers doing steward-like things (empirical observations without adequate theory)
+2. **Use adjacent concepts** (boundary-spanning, co-creation, relational governance, strategic partnership) that capture *parts* of the phenomenon but miss the whole
+3. **Get close but stop short** — because their theoretical lens (TCE, DC, ecosystem) has an assumption that blocks them from seeing the full picture
+
+Papers that *almost* describe Ecosystem Stewardship but can't name it — because their theory doesn't have the construct — are the **strongest evidence** for the gap. They prove the phenomenon exists AND that existing theory can't capture it.
+
+### What the SLR Should Reveal
+
+| Finding | What it means |
+|---------|--------------|
+| Papers describing steward-like behavior, explained via TCE | Misclassified — TCE lens forces "strategic self-interest" interpretation onto benevolent behavior |
+| Papers on boundary-spanning capabilities | Adjacent concept — captures the "across boundaries" part but not the "stewardship motive" |
+| Papers on co-creation | Adjacent concept — captures collaboration but assumes symmetry, misses the asymmetric steward role |
+| Papers on ecosystem orchestration by non-platform actors | Closest match — but likely rare and under-theorized |
+| Zero papers combining all 5 anomaly dimensions | The theoretical gap — the construct space is genuinely empty |
+
+The quality gate is NOT "zero papers found." It's: **no existing construct captures the combination of (1) stewardship motive + (2) external capability building + (3) non-platform orchestration + (4) paradox resolution + (5) cross-boundary dynamic capabilities.**
+
+Individual papers may cover 1-2 dimensions. The gap is at the intersection.
+
+---
+
 ## Theories Violated — Summary Matrix
 
 | Theory | Anomalies | Core assumption that blocks explanation |
 |--------|-----------|----------------------------------------|
-| **TCE (Williamson)** | A1, A2, A5, A7 | Opportunism — suppliers maximize self-interest |
-| **Agency theory** | A2, A5 | Self-interest — agents serve own interests unless governed |
+| **TCE (Williamson)** | A1, A2, A5 | Opportunism — suppliers maximize self-interest |
 | **Dynamic Capabilities (Teece)** | A1 | Internal control — capabilities operate within firm boundaries |
 | **Paradox theory (Smith & Lewis)** | A3 | Internal resolution — tensions resolved by insiders |
 | **Ecosystem theory (Gawer, Jacobides)** | A4 | Platform ownership — orchestration requires ownership |
 | **Stewardship theory (Davis et al.)** | A5 | Intra-firm — stewardship between owners and managers |
-| **RBV (Barney)** | A6, A7 | Knowledge protection — firms guard proprietary knowledge |
+
+### On RBV
+
+The evidence scan surfaced RBV violations (publishing proprietary research, building open tools). These are real but secondary — they are *consequences* of stewardship behavior (A1, A5), not independent anomalies. Including RBV as a sixth theoretical stream would dilute the argument. The paper challenges five theories; that's enough.
+
+RBV violations can serve as supporting evidence within A1 (capability building includes knowledge sharing) and A5 (stewardship includes building client independence through open infrastructure). They belong in the discussion section as "additional implications" — not in the core argument.
 
 ---
 
 ## What This Means for the Paper
 
-The original paper2_spec.md identified 3 theoretical streams (TCE, DC, Ecosystem) plus Stewardship as a bridge. The anomaly analysis adds:
+The anomaly analysis confirms the original paper2_spec.md's four theoretical streams and adds one:
 
-1. **Paradox theory** as a violated stream (A3) — not just context, but a theory whose assumptions are directly challenged.
-2. **RBV** as a violated stream (A6, A7) — the knowledge-sharing behavior contradicts resource protection.
-3. **Two new anomaly types** (A6, A7) — research partnership and public infrastructure — that weren't in the original spec but are well-evidenced.
+1. **TCE** → violated by A1, A2, A5 (the core clash — opportunism vs. stewardship)
+2. **Dynamic Capabilities** → violated by A1 (extended by the meta-DC construct)
+3. **Ecosystem theory** → violated by A4 (non-platform orchestration)
+4. **Stewardship theory** → extended from intra-firm to inter-organizational (A5)
+5. **Paradox theory** → violated by A3 (not just context, but a theory whose assumptions are directly challenged)
 
-The paper's literature streams (Section 3) should cover:
-- TCE → violated by A1, A2, A5, A7
-- DC → violated by A1 (and extended by the meta-DC construct)
-- Ecosystem theory → violated by A4
-- Stewardship theory → extended from intra-firm to inter-organizational (A5)
-- Paradox theory → violated by A3
-- RBV → violated by A6, A7 (possibly fold into DC discussion)
-
-The construct "Ecosystem Stewardship" must explain all 7 anomalies, not just the original 5.
+The construct "Ecosystem Stewardship" must explain all 5 anomalies. The SLR (Phases 1-4) tests whether this theoretical gap holds — not by finding zero papers, but by finding papers that describe the behavior without being able to theorize it.
