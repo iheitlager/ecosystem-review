@@ -87,7 +87,7 @@ templates:
         builtin.keyword_screening:
           mode: "inclusion_required"  # Both gates must pass
           complete: strict # must have title/abstract/keywords
-
+          inclusion_is_final: true # the non-rejects become includes
           # Alternative modes:
           # mode: "exclusion_only"    # Just filter out off-topic domains
           # mode: "soft"              # Keywords for ranking, no filtering      
@@ -115,6 +115,8 @@ templates:
                 - "weapon"
                 - "consumer behavior"
                 - "retail customer"
+                - "covid*"
+                - "pandemic"
             study_types: # this is implicitly defined
               # Direct exclusions (hard exclude these study types)
               - "editorial"
@@ -197,21 +199,35 @@ steps:
     description: "Import papers from local IEEE Xplore export file from 2025-12-31 "
     enabled: true
     builtin.bibtex_import:
-      file_path: "data/bib/first_ieee.bib"
+      file_path: "data/bib/ieee_20251231.bib"
       source_type: "ieee_xplore"
 
+  - step: Basic screening
+    enabled: true
+    builtin.run-template:
+      template: "screen_basics"
+
   - step: Download pdfs
+    enabled: true
     builtin.download_pdfs:
       timeout: 30
       store_path: "output/pdf_ieee"
       sources:
-        # - "unpaywall"
         - "publisher"
-        # - "core"
-        # - "openalex"
       output_errors: output/pdf_errors_openalex.json
 
-  
+  - step: "Harmonize cite_keys"
+    builtin.fix_cite_keys:
+      includes: only
+
+  - step: Calculate embeddings for semantic screening
+    enabled: true
+    builtin.generate_embeddings:
+      # model: "all-mpnet-base-v2"
+      model: "sentence-transformers/allenai-specter"
+      device: "mps"
+      included_only: true
+
   - step: Snowball forward references
     enabled: false
     builtin.citations:
@@ -235,3 +251,13 @@ steps:
       includes: only
       duplicates: false
       overwrite: true
+
+  - step: Upload to PostgreSQL
+    builtin.upload_database:
+      includes : only
+      db_username: "$DB_USER"
+      db_password: "$DB_PASSWORD"
+      db_host: "$DB_HOST"
+      db_port: "$DB_PORT"
+      db_name: "$DB_NAME"
+      conflict_strategy: "update"

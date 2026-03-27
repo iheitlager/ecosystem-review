@@ -1,0 +1,166 @@
+# ============================================================================
+# Paper 2 — Ecosystem Stewardship SLR — First Pipeline Test
+# ============================================================================
+# Purpose: Test import + dedup + screening on Scopus data only
+# Expected: ~1,670 papers in → dedup → keyword screen → report counts
+# ============================================================================
+
+project:
+  name: "Ecosystem Stewardship SLR"
+  description: "How do IT suppliers orchestrate innovation ecosystems without platform ownership?"
+  researcher: "Ilja Heitlager"
+  email: "i.heitlager@tue.nl"
+  institution: "TU Eindhoven"
+  start_date: "2026-03-27"
+  research_question: "How do IT suppliers orchestrate innovation ecosystems without platform ownership, and what capabilities and governance mechanisms enable this role?"
+
+# Search definition (documentation — actual search was done in Scopus/WoS)
+search:
+  name: "Ecosystem Stewardship Literature Review"
+  description: "Papers on supplier ecosystem orchestration, stewardship, dynamic capabilities across boundaries"
+
+  query_definition:
+    - "Query A: (IT supplier OR IT vendor OR service provider OR IT partner OR outsourcing provider) AND (ecosystem OR orchestrat* OR steward* OR co-creation OR value creation)"
+    - "Query B: (dynamic capabilities OR meta-capabilities OR higher-order capabilities) AND (supplier OR vendor OR external OR boundary-spanning OR inter-organizational)"
+    - "Query C: (ecosystem OR platform ecosystem OR innovation ecosystem) AND (orchestrat* OR governance OR coordination OR complementor) AND (supplier OR vendor OR partner)"
+
+  date_range:
+    from: 2005
+    to: 2026
+
+  databases:
+    - scopus
+    - web_of_science
+    - ieee_xplore
+
+# ============================================================================
+# Templates — reusable screening workflows
+# ============================================================================
+templates:
+  - template: "screen_ecosystem"
+    steps:
+      - step: "Metadata screening — language and type"
+        builtin.metadata_screening:
+          exclude:
+            language:
+              - NOT: "en"
+            paper_types:
+              - NOT: "journal_article"
+            quality_tier:
+              - NOT: "peer_reviewed_journal"
+              - NOT: "non_peer_reviewed_article"
+
+      - step: "Keyword screening — ecosystem stewardship focus"
+        builtin.keyword_screening:
+          mode: "inclusion_required"
+          exclude:
+            keywords:
+              domains:
+                - "medical"
+                - "healthcare"
+                - "patient"
+                - "disease"
+                - "clinical"
+                - "pharmaceutical"
+                - "drug"
+              other:
+                - "agriculture"
+                - "farming"
+                - "crop"
+                - "education"
+                - "classroom"
+                - "military"
+                - "weapon"
+                - "consumer behavior"
+                - "retail customer"
+            study_types:
+              - "editorial"
+          include:
+            thresholds:
+              auto_accept: 0.65
+              manual_review: 0.40
+              auto_reject: null
+            keywords:
+              ecosystem:
+                - "ecosystem"
+                - "platform ecosystem"
+                - "innovation ecosystem"
+                - "digital ecosystem"
+                - "orchestrat*"
+                - "co-creat*"
+                - "co-evolution"
+              supplier_role:
+                - "supplier*"
+                - "vendor*"
+                - "service provider*"
+                - "outsourc*"
+                - "partner*"
+                - "intermediar*"
+                - "integrator"
+              capabilities:
+                - "dynamic capabilit*"
+                - "meta-capabilit*"
+                - "boundary-spanning"
+                - "inter-organizational"
+                - "cross-organizational"
+                - "capability building"
+                - "knowledge transfer"
+              governance:
+                - "steward*"
+                - "governance"
+                - "coordination"
+                - "trust"
+                - "relational"
+                - "benevolent"
+                - "legitimacy"
+
+# ============================================================================
+# Pipeline — Phase 1 test: Scopus only
+# ============================================================================
+steps:
+  - step: "Import Scopus papers"
+    builtin.bibtex_import:
+      file_path: "archive/data/bib/scopus_20251231.bib"
+      source_type: "scopus"
+      batch_id: "paper2_scopus_20260327"
+      fix_cite_key: true
+
+  - step: "Checkpoint after import"
+    builtin.checkpoint:
+
+  - step: "Deduplicate (within Scopus — expect low rate)"
+    builtin.deduplication:
+      methods:
+        - method: "doi_exact"
+          priority: 1
+        - method: "title_author_fuzzy"
+          priority: 2
+          threshold: 0.90
+        - method: "title_fuzzy"
+          priority: 3
+          threshold: 0.95
+
+  - step: "Checkpoint after deduplication"
+    builtin.checkpoint:
+
+  - step: "Screen papers"
+    builtin.run-template:
+      template: "screen_ecosystem"
+
+  - step: "Checkpoint after screening"
+    builtin.checkpoint:
+
+  - step: "Export screened papers (JSONL)"
+    builtin.export:
+      format: jsonl
+      output_path: "./output/paper2_screened.jsonl"
+      exclude_none: true
+      duplicates: false
+      overwrite: true
+
+  - step: "Export screened papers (BibTeX)"
+    builtin.export:
+      format: bibtex
+      output_path: "./output/paper2_screened.bib"
+      duplicates: false
+      overwrite: true
