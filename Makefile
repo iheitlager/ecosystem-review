@@ -8,7 +8,6 @@ PAPER := paper
 
 SCANNER := cd $(HOME)/wc/paper-scanner && uv run paper-processor
 DEFINITION := $(CURDIR)/definition-paper2-test.yml
-CACHE := $(HOME)/.paper-scanner-paper2
 
 .PHONY: help build clean validate watch open slr slr-dry slr-repl
 
@@ -55,11 +54,9 @@ watch: ## Watch for changes and rebuild (requires fswatch)
 	@fswatch -o *.tex | xargs -n1 -I{} make quick
 
 slr: ## Run SLR pipeline (import → dedup → screen → export)
-	$(SCANNER) run $(DEFINITION) --verbose --cache-dir $(CACHE)
-
+	$(SCANNER) run $(DEFINITION) --verbose 
 slr-dry: ## Dry-run SLR pipeline (show steps without executing)
-	$(SCANNER) run $(DEFINITION) --verbose --dry-run --cache-dir $(CACHE)
-
+	$(SCANNER) run $(DEFINITION) --verbose --dry-run 
 slr-repl: ## Interactive SLR REPL for debugging pipeline
 	$(SCANNER) repl -f $(DEFINITION) --cache-dir $(CACHE) --verbose
 
