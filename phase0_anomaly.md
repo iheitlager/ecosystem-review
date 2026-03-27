@@ -1,8 +1,84 @@
 # Phase 0 — The Empirical Puzzle
 
+## The Structural Context: The Mid-Size Squeeze
+
+Before examining the behavioral anomaly, consider the structural market pressure that shapes it.
+
+The IT services industry is being compressed from three directions simultaneously:
+
+```
+Hyperscalers                    Large Integrators                Product Vendors
+(AWS, Azure, GCP)               (Accenture, TCS, Capgemini)      (Oracle, SAP, ServiceNow)
+        ↓                               ↓                               ↓
+Commoditize infrastructure      Commoditize delivery             Commoditize application layer
+Move up: AI services,           Scale: acquire boutique          Expand: autonomous platforms,
+managed platforms,               firms, build proprietary         low-code, AI-native products
+industry solutions               AI practices                     that reduce need for custom work
+        ↓                               ↓                               ↓
+        └───────────────────────────────┼───────────────────────────────┘
+                                        ↓
+                         Mid-size specialist IT firms
+                         (SBP, Xebia, Conclusion, etc.)
+```
+
+### What Each Layer Is Doing
+
+**Hyperscalers** are moving up the stack. AWS, Azure, and GCP no longer just sell infrastructure — they offer managed AI services (Vertex AI, Azure OpenAI, Bedrock), industry-specific solutions, and increasingly, orchestration capabilities. Every layer they add absorbs work that mid-size firms used to do. Google's Gemini agents and Amazon's Bedrock agents are the platform becoming the orchestrator.
+
+**Large integrators** are scaling horizontally. Accenture alone acquires dozens of specialist firms per year. TCS, Infosys, and Capgemini build proprietary delivery platforms and AI practices that standardize what boutique firms once differentiated on. Their competitive advantage is talent pool depth and global delivery — not client intimacy.
+
+**Product vendors** are closing the gap. Oracle's autonomous database, SAP's AI-native S/4HANA, ServiceNow's platform automation — each release reduces the need for custom integration and specialist middleware knowledge. The vendor is becoming self-sufficient.
+
+### The Strategic Vacuum
+
+What's left for the mid-size firm?
+
+- Can't compete on **infrastructure** — hyperscalers win on scale, reliability, and price.
+- Can't compete on **talent volume** — integrators win on headcount and global reach.
+- Can't compete on **product IP** — vendors own the products.
+
+The only defensible position is **the relationship layer** — deep, trust-based, cross-domain understanding of how *this specific client* needs to evolve within *this specific ecosystem*. That knowledge is:
+- Not transferable to a hyperscaler (too contextual)
+- Not replicable by an integrator (requires intimacy, not scale)
+- Not automatable by a product vendor (requires judgment across organizational boundaries)
+
+### Stewardship as Survival, Not Altruism
+
+This reframes the anomaly. The behaviors in A1-A5 are not irrational generosity — they are the **only viable competitive strategy** when extraction leads to commoditization and death.
+
+- **Building client capabilities** (A1) makes the client dependent on your *knowledge*, not your *platform* — a dependency that deepens with time rather than eroding with competition.
+- **Coordinating competitors** (A2) makes you indispensable as the integrator of the ecosystem — a role hyperscalers can't fill (they're one of the vendors being integrated) and integrators don't fill (they'd rather replace the competitors with their own people).
+- **Resolving internal paradoxes** (A3) creates value that only an outsider with deep insider knowledge can provide — the definition of a non-substitutable resource.
+- **Orchestrating without platform ownership** (A4) sidesteps the platform trap — you don't need to outbuild AWS, you need to outthink them at the client-specific level.
+- **Acting as steward** (A5) compounds the relationship — every stewardship act increases trust, which increases access, which increases knowledge, which increases value. This is the flywheel that extraction destroys.
+
+### Theoretical Implications
+
+This structural argument connects to:
+
+- **Industry architecture theory** (Jacobides, Knudsen & Augier 2006) — value migrates across layers. The mid-size squeeze is a value migration event.
+- **Strategic positioning** (Porter 1996) — stuck in the middle is death; stewardship is a distinct strategic position, not a halfway house.
+- **Cospecialization** (Teece 2007) — the steward's asset is cospecialized with the client's ecosystem. It appreciates with use rather than depreciating.
+
+### Boundary Conditions This Creates
+
+Stewardship should work when:
+- Client ecosystem is complex (multi-vendor, multi-technology)
+- Client lacks internal capability to orchestrate (capability gap)
+- Relationship is long-term and trust-based (repeated interaction)
+- Supplier has deep domain knowledge across similar clients (portfolio effect)
+
+Stewardship should fail when:
+- Service is commoditized enough for hyperscaler or integrator to absorb
+- Client has sufficient internal capability (no need for external steward)
+- Relationship is transactional or short-term (no trust accumulation)
+- Regulatory or procurement rules force competitive tendering (no relationship continuity)
+
+---
+
 ## The Anomaly
 
-Schuberg Philis (SBP), a Dutch IT services firm, consistently behaves in ways that violate core assumptions of the dominant theories used to explain supplier-client relationships. These behaviors are not exceptions or edge cases — they are the operating model.
+Schuberg Philis (SBP), a Dutch IT services firm, consistently behaves in ways that violate core assumptions of the dominant theories used to explain supplier-client relationships. These behaviors are not exceptions or edge cases — they are the operating model. The structural context above suggests these behaviors may be strategically rational — but existing theory has no framework to explain *how* or *why* they work.
 
 The following table maps observed behaviors to the specific theoretical assumptions they violate:
 
