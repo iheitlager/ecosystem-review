@@ -122,7 +122,6 @@ steps:
     builtin.bibtex_import:
       file_path: "archive/data/bib/scopus_20251231.bib"
       source_type: "scopus"
-      batch_id: "paper2_scopus_20260327"
       fix_cite_key: true
 
   - step: "Checkpoint after import"
@@ -155,12 +154,12 @@ steps:
       format: jsonl
       output_path: "./output/paper2_screened.jsonl"
       exclude_none: true
-      duplicates: false
+      duplicates: "false"
       overwrite: true
 
   - step: "Export screened papers (BibTeX)"
     builtin.export:
       format: bibtex
       output_path: "./output/paper2_screened.bib"
-      duplicates: false
+      duplicates: "false"
       overwrite: true
