@@ -37,3 +37,6 @@ Papers cited in the argument but not yet in `study/references.bib`. Find, downlo
 
 - [ ] **Penrose, E. (1959).** *The Theory of the Growth of the Firm.* Oxford University Press.
   - **Why:** Firm boundaries, resource constraints, growth limits. Foundational reference.
+
+- [ ] **Carroll, C., Booth, A., Leaviss, J. & Rick, J. (2013).** "Best fit" framework synthesis: refining the method. *BMC Medical Research Methodology*, 13, 37.
+  - **Why:** Methodological precedent for coding SLR data against a pre-defined framework (the anomaly table). Justifies the framework synthesis component of the thematic matrix.
