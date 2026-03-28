@@ -309,16 +309,32 @@ Why it fails: [the specific assumption that blocks explanation]
 What would need to change: [the assumption that must be relaxed]
 ```
 
-**The thematic matrix (supplier role × theoretical lens)** visualizes this. Empty or sparse cells = under-theorized areas.
+### The Thematic Matrix: Concept-Centric Gap Visualization
 
-| Supplier role \ Theory | TCE | DC | Ecosystem | Stewardship | Gap? |
+The analysis uses a **concept matrix** (Webster & Watson 2002) — the standard method for concept-centric literature reviews in information systems — extended with two features from the abductive methodology.
+
+**The base matrix** cross-tabulates `supplier role` (rows) against `theoretical lens` (columns). Each cell contains the count and references of papers that characterize suppliers in that role through that theory. This follows Miles & Huberman's (1994) cross-case display logic.
+
+| Supplier role \ Theory | TCE | DC | Ecosystem | Stewardship | Paradox |
 |----------------------|-----|----|-----------|-----------| -----|
-| Vendor | dense | some | some | rare | No |
-| Partner | some | some | some | rare | Partial |
-| Orchestrator | empty | rare | some | empty | **YES** |
-| Steward | empty | empty | empty | rare (intra-firm only) | **YES** |
+| Vendor | dense | some | some | rare | · |
+| Partner | some | some | some | rare | · |
+| Orchestrator | · | rare | some | · | · |
+| Steward | · | · | · | rare (intra-firm) | · |
 
-**Quality Gate:** Every "empty" or "gap" cell must be verified — can we really not find papers? Or did the search miss them? Re-run targeted searches for suspicious gaps.
+**Extension 1: Anomaly score overlay.** Each paper is coded against the five anomalies (A1-A5) from Phase 0, using the pre-defined framework from the empirical puzzle (framework synthesis approach — Carroll et al. 2013). Cells are colour-coded by average anomaly score:
+
+- **Low anomaly score** (0-1) in a dense cell = well-theorized territory. The theory adequately explains what's observed.
+- **High anomaly score** (2+) in a dense cell = **misclassification**. The phenomenon is observed but forced into an inadequate theoretical lens. These are the strongest evidence for the gap — papers that describe steward-like behavior but code it as "partnership" under TCE because the theory has no steward category.
+- **Empty cells** = under-explored territory. Could be a gap or could be a search limitation.
+
+**Extension 2: Blocking assumption annotation.** For each theoretical stream (column), the matrix is annotated with the specific assumption that prevents papers in that stream from explaining ecosystem stewardship. This follows Gioia et al.'s (2013) first-order → second-order coding structure: the paper's own characterization (first-order) is mapped to the blocking assumption (second-order).
+
+**This three-dimensional matrix (role × lens × anomaly score) directly visualizes the abductive argument.** The gap is not simply "no papers exist" — it is "papers exist that describe the behavior but cannot theorize it because their theoretical lens blocks them." The misclassified cells are more valuable than the empty ones.
+
+**Quality Gate:** Every "empty" or "gap" cell must be verified — can we really not find papers? Or did the search miss them? Re-run targeted searches for suspicious gaps before claiming theoretical inadequacy.
+
+**Methodological precedent:** The base matrix follows Webster & Watson (2002). The framework coding follows Carroll et al. (2013). The cross-case display follows Miles & Huberman (1994). The first-order/second-order coding follows Gioia et al. (2013). The abductive logic — coding against a pre-defined empirical puzzle — follows Dubois & Gadde (2002). The combination is novel but each component is well-established.
 
 ### 5.2 Construct Definition — Ecosystem Stewardship
 
