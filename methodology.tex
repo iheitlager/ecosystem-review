@@ -1,9 +1,108 @@
 \section{Method: Abductive Theory Building}
 
-% Abductive reasoning (Dubois & Gadde 2002)
-% SLR as evidence of theoretical inadequacy, not generative method
-% Empirical anchoring: insider practitioner research (Brannick & Coghlan 2007)
-% Coding scheme: supplier role × theoretical lens × anomaly coverage
-% Cohen's Kappa for screening reliability
-% PRISMA flow diagram
-% See working/methodology.md for full protocol
+\subsection{Epistemological Position}
+
+This paper does not follow the positivist meta-review tradition where a systematic literature review synthesizes existing findings to derive cumulative knowledge. A standard SLR answers ``what does the literature say?'' --- it cannot produce a new theoretical construct, because if the construct were already in the literature, it would not be new.
+
+Instead, this paper uses \textbf{abductive reasoning} \citep{DuboisGadde2002}: starting from a surprising empirical observation (IT suppliers orchestrating client ecosystems without platform ownership), demonstrating that no existing theory can explain it (through a systematic literature review), and proposing a new construct that, if true, would make the observed behavior intelligible.
+
+The SLR serves as evidence of theoretical inadequacy --- it demonstrates the gap --- not as the generative method. The theoretical contribution comes from the abductive inference, not from summarizing what others wrote.
+
+\subsection{Research Design}
+
+The research proceeds through five phases:
+
+\begin{enumerate}
+    \item \textbf{Phase 0: Empirical puzzle.} Formal articulation of the anomaly --- five observed supplier behaviors that violate core assumptions of existing theory (Section I).
+    \item \textbf{Phase 1: Systematic search.} Three query clusters across Scopus, Web of Science, and IEEE Xplore, targeting five theoretical streams.
+    \item \textbf{Phase 2: Screening and snowballing.} Deduplication, keyword screening, and citation expansion (backward and forward) until saturation.
+    \item \textbf{Phase 3: Theoretical coding.} Dual-pass extraction coding each paper's theoretical assumptions, supplier role characterization, and anomaly coverage.
+    \item \textbf{Phase 4: Abductive synthesis.} Concept matrix construction, gap visualization, construct definition, and proposition formulation.
+\end{enumerate}
+
+This design combines elements from four established methodological traditions: concept-centric literature review \citep{WebsterWatson2002}, cross-case display \citep{MilesHuberman1994}, framework synthesis \citep{Carroll2013}, and abductive case research \citep{DuboisGadde2002}. Each component is well-established; their combination in service of abductive theory building is the methodological contribution.
+
+\subsection{Empirical Anchoring}
+
+The empirical puzzle is anchored in practitioner observation at Schuberg Philis (SBP), a Dutch IT services firm. The first author serves as CIO at SBP, making this insider practitioner research \citep{BrannickCoghlan2007}. This position creates unique access to the phenomenon --- the behaviors in A1--A5 are directly observed, not inferred from secondary data --- but also requires explicit reflexivity about potential bias.
+
+Three safeguards address this: (1) the SLR is conducted independently of the motivating case --- all literature coding follows a pre-defined protocol; (2) the construct definition follows \citeauthor{Suddaby2010}'s (\citeyear{Suddaby2010}) criteria, which require discriminant validity against existing constructs; (3) the propositions are formulated to be testable through empirical validation in Paper 3, which will survey multiple firms beyond SBP.
+
+\subsection{Search Strategy}
+
+\subsubsection{Query clusters}
+
+Three search strings target the theoretical pillars of the argument:
+
+\begin{itemize}
+    \item \textbf{Query A --- Supplier role evolution:} \textit{(``IT supplier'' OR ``IT vendor'' OR ``service provider'' OR ``IT partner'' OR ``outsourcing provider'') AND (``ecosystem'' OR ``orchestrat*'' OR ``steward*'' OR ``co-creation'' OR ``value creation'')}
+    \item \textbf{Query B --- Dynamic capabilities beyond boundaries:} \textit{(``dynamic capabilities'' OR ``meta-capabilities'' OR ``higher-order capabilities'') AND (``supplier'' OR ``vendor'' OR ``external'' OR ``boundary-spanning'' OR ``inter-organizational'')}
+    \item \textbf{Query C --- Ecosystem governance:} \textit{(``ecosystem'' OR ``platform ecosystem'' OR ``innovation ecosystem'') AND (``orchestrat*'' OR ``governance'' OR ``coordination'' OR ``complementor'') AND (``supplier'' OR ``vendor'' OR ``partner'')}
+\end{itemize}
+
+\subsubsection{Databases and scope}
+
+Searches were conducted across Scopus (broadest coverage of management and IS literature), Web of Science (high-impact journals), and IEEE Xplore (IT-specific ecosystem and platform papers). The date range spans 2005--2026, anchored by \citet{Teece1997}'s foundational dynamic capabilities work while including recent ecosystem strategy developments.
+
+\subsubsection{Inclusion and exclusion criteria}
+
+Papers were included if they are peer-reviewed journal articles or top-tier conference papers, published in English, addressing supplier or vendor roles in innovation, ecosystems, or capability building. Papers were excluded if they focus on pure consumer/B2C contexts, domain-specific applications (medical, agriculture, education, military), or lack theoretical contribution (pure case description without theoretical framing).
+
+\subsection{Screening Protocol}
+
+\subsubsection{Deduplication}
+
+Papers appearing in multiple databases were deduplicated using three methods in priority order: DOI exact match, title-plus-author fuzzy match (threshold 0.90), and title-only fuzzy match (threshold 0.95).
+
+\subsubsection{Automated screening}
+
+Title and abstract screening used keyword-based classification against four inclusion categories (ecosystem, supplier role, capabilities, governance) and domain-based exclusion lists. Papers passing the keyword gate were ranked by semantic similarity to the research question using embedding-based classification.
+
+\subsubsection{Screening reliability}
+
+To validate automated screening, a random sample of 50 papers was independently classified by the first author. Agreement was measured using Cohen's Kappa ($\kappa$). A threshold of $\kappa > 0.80$ (almost perfect agreement) was required to proceed; $\kappa$ between 0.60 and 0.80 triggered prompt revision and re-screening.
+
+\subsubsection{Citation expansion}
+
+Backward snowballing extracted reference lists from included papers via CrossRef, filtering for journal articles and iterating until saturation ($<$ 5\% new papers per iteration, maximum three iterations). Forward snowballing identified papers citing each included paper via OpenAlex, limited to one iteration.
+
+\subsection{Theoretical Coding}
+
+\subsubsection{Dual-pass extraction}
+
+Each included paper was processed through two extraction passes. Pass 1 captured standard metadata, research question, methodology, key findings, and empirical patterns using the CAMO framework (Context-Agency-Mechanism-Outcome). Pass 2 --- the primary coding for this paper --- captured the theoretical assumptions underlying each paper's treatment of suppliers.
+
+\subsubsection{Coding scheme}
+
+The theoretical coding scheme was built from the anomaly table in Phase 0. For each paper, six dimensions were coded:
+
+\begin{enumerate}
+    \item \textbf{Theoretical lens:} primary and secondary streams (TCE, dynamic capabilities, ecosystem strategy, stewardship theory, paradox theory, relational view, other).
+    \item \textbf{Supplier role:} how the paper characterizes the supplier (vendor, partner, orchestrator, steward, platform owner, complementor, not discussed).
+    \item \textbf{Supplier motive assumed:} the paper's implicit or explicit assumption about supplier motivation (opportunistic, self-interested, neutral, collaborative, benevolent).
+    \item \textbf{Capability scope:} whether capabilities discussed are internal only, inter-organizational, or meta-capabilities operating on behalf of others.
+    \item \textbf{Orchestration mode:} the coordination mechanism assumed (platform-based, contractual, relational, hierarchical, hybrid).
+    \item \textbf{Anomaly coverage:} for each of the five anomalies (A1--A5), whether the paper addresses, describes, contradicts, or is silent on the behavior. An anomaly score (0--5) was computed as the count of ``addresses'' and ``describes'' classifications.
+\end{enumerate}
+
+Additionally, each paper was coded for its \textit{blocking assumption} --- the specific theoretical assumption that prevents it from explaining ecosystem stewardship --- and its \textit{nearest concept} --- the construct that comes closest to ecosystem stewardship without capturing it fully.
+
+\subsection{Analysis: The Concept Matrix}
+
+The analysis centers on a \textbf{concept matrix} \citep{WebsterWatson2002} that cross-tabulates supplier role (rows) against theoretical lens (columns), following Miles and Huberman's (\citeyear{MilesHuberman1994}) cross-case display logic. This standard method for concept-centric literature reviews in information systems is extended with two features from the abductive methodology.
+
+\textbf{Extension 1: Anomaly score overlay.} Each cell is annotated with the average anomaly score of papers it contains. This follows the framework synthesis approach of \citet{Carroll2013}, where data is coded against a pre-defined framework --- in this case, the empirical puzzle from Phase 0. Three patterns emerge:
+
+\begin{itemize}
+    \item \textit{Low anomaly score in dense cells:} well-theorized territory --- the theory adequately explains what is observed.
+    \item \textit{High anomaly score in dense cells:} \textbf{misclassification} --- the phenomenon is observed but forced into an inadequate theoretical lens. These are the strongest evidence for the gap.
+    \item \textit{Empty cells:} under-explored territory requiring verification (did the search miss relevant papers, or does the gap genuinely exist?).
+\end{itemize}
+
+Misclassified cells --- papers that describe steward-like behavior but code it as ``partnership'' under TCE because the theory has no steward category --- are more valuable as gap evidence than empty cells. They demonstrate that the phenomenon exists \textit{and} that existing theory forces researchers to mislabel it.
+
+\textbf{Extension 2: Blocking assumption annotation.} For each theoretical stream, the matrix is annotated with the specific assumption that prevents papers in that stream from explaining ecosystem stewardship. This follows Gioia et al.'s (\citeyear{Gioia2013}) first-order to second-order coding structure: the paper's own characterization (first-order) is mapped to the blocking assumption (second-order) and then to the aggregate theoretical dimension it challenges.
+
+\subsection{Construct Development}
+
+The construct definition follows \citeauthor{Suddaby2010}'s (\citeyear{Suddaby2010}) construct clarity criteria: (1) what the construct is, (2) what it is not (discriminant validity against adjacent constructs), (3) boundary conditions specifying when it applies, and (4) its relationship to existing constructs. Propositions were formulated to be traceable to at least three papers from the SLR, with counter-evidence explicitly addressed for each proposition. The framework targets \citeauthor{Whetten1989}'s (\citeyear{Whetten1989}) criteria for theoretical contribution: what (the construct and mechanisms), how (the causal logic), why (the structural argument), and who/where/when (the boundary conditions).

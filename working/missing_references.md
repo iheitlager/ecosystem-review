@@ -29,7 +29,7 @@ Papers cited in the argument but not yet in `study/references.bib`. Find, downlo
 
 ## Nice to Have (discriminant validity / depth)
 
-- [ ] **Shepherd, D.A. & Suddaby, R. (2017).** Theory building: A review and integration. *Journal of Management*, 43(1), 59-86.
+- [X] **Shepherd, D.A. & Suddaby, R. (2017).** Theory building: A review and integration. *Journal of Management*, 43(1), 59-86.
   - **Why:** How to build theory for AMR/AMJ level. Methodological backing.
 
 - [ ] **Von Nordenflycht, A. (2010).** What is a professional service firm? Toward a theory and taxonomy of knowledge-intensive firms. *Academy of Management Review*, 35(1), 155-174.
@@ -38,5 +38,5 @@ Papers cited in the argument but not yet in `study/references.bib`. Find, downlo
 - [ ] **Penrose, E. (1959).** *The Theory of the Growth of the Firm.* Oxford University Press.
   - **Why:** Firm boundaries, resource constraints, growth limits. Foundational reference.
 
-- [ ] **Carroll, C., Booth, A., Leaviss, J. & Rick, J. (2013).** "Best fit" framework synthesis: refining the method. *BMC Medical Research Methodology*, 13, 37.
+- [X] **Carroll, C., Booth, A., Leaviss, J. & Rick, J. (2013).** "Best fit" framework synthesis: refining the method. *BMC Medical Research Methodology*, 13, 37.
   - **Why:** Methodological precedent for coding SLR data against a pre-defined framework (the anomaly table). Justifies the framework synthesis component of the thematic matrix.
