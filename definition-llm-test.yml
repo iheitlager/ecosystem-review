@@ -1,0 +1,79 @@
+# ============================================================================
+# Paper 2 — LLM Scanning Test (5 PDFs)
+# ============================================================================
+# Purpose: Test the three new LLM steps on existing PDFs
+# Steps: load PDFs → metadata extraction (haiku) → relevance scoring (haiku) → CAMO (sonnet)
+# ============================================================================
+
+project:
+  name: "Ecosystem Stewardship SLR — LLM Test"
+  description: "Test LLM extraction pipeline on 5 PDFs"
+  researcher: "Ilja Heitlager"
+  email: "i.heitlager@tue.nl"
+  institution: "TU Eindhoven"
+  start_date: "2026-03-28"
+  research_question: "How do IT suppliers orchestrate innovation ecosystems without platform ownership, and what capabilities and governance mechanisms enable this role?"
+
+steps:
+  - step: "Load 5 test PDFs"
+    builtin.load_files:
+      file_path: "/Users/iheitlager/studies/ecosystem-review/archive/output/pdf"
+      store_path: "/Users/iheitlager/studies/ecosystem-review/output/pdf"
+      limit: 5
+
+  - step: "Retrieve metadata from APIs"
+    builtin.retrieve_metadata:
+      methods:
+        - crossref
+        - openalex
+      overwrite: false
+
+  - step: "Checkpoint after load + metadata"
+    builtin.checkpoint:
+
+  - step: "Metadata Extraction (Haiku)"
+    builtin.metadata_extraction:
+      model: "claude-haiku-4-5-20251001"
+
+  - step: "Checkpoint after metadata"
+    builtin.checkpoint:
+
+  - step: "Relevance Scoring (Haiku)"
+    builtin.relevance_scoring:
+      model: "claude-haiku-4-5-20251001"
+
+  - step: "Checkpoint after relevance"
+    builtin.checkpoint:
+
+  - step: "Force include all papers for CAMO test"
+    builtin.patch:
+      patches:
+        - doi: "10.1002/sej.1499"
+          set:
+            screening.final_decision: "included"
+        - doi: "10.1080/10864415.2024.2332047"
+          set:
+            screening.final_decision: "included"
+        - doi: "10.1080/13662716.2023.2189091"
+          set:
+            screening.final_decision: "included"
+        - doi: "10.1109/tem.2021.3075502"
+          set:
+            screening.final_decision: "included"
+        - doi: "10.1186/s13731-024-00404-5"
+          set:
+            screening.final_decision: "included"
+
+  - step: "CAMO Extraction (Sonnet)"
+    builtin.camo_extraction:
+      model: "claude-sonnet-4-5-20250929"
+
+  - step: "Checkpoint after CAMO"
+    builtin.checkpoint:
+
+  - step: "Export results (BibTeX)"
+    builtin.export:
+      format: bibtex
+      output_path: "/Users/iheitlager/studies/ecosystem-review/output/llm_test_results.bib"
+      duplicates: "false"
+      overwrite: true
