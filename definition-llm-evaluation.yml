@@ -1,0 +1,161 @@
+# ============================================================================
+# Paper 2 — LLM Evaluation Pipeline (5 PDFs)
+# ============================================================================
+# Purpose: Extensive evaluation of LLM enrichment steps with exports after
+#          each stage to enable step-by-step comparison and quality assessment.
+# Flow:    load → API metadata → export → LLM metadata → export →
+#          relevance → export → patch included → CAMO → export
+# Output:  ./output/evaluation/ (JSONL + BibTeX at each stage)
+# ============================================================================
+
+project:
+  name: "Ecosystem Stewardship SLR — LLM Evaluation"
+  description: "Extensive evaluation pipeline: export after every enrichment step for quality assessment"
+  researcher: "Ilja Heitlager"
+  email: "i.heitlager@tue.nl"
+  institution: "TU Eindhoven"
+  start_date: "2026-03-30"
+  research_question: "How do IT suppliers orchestrate innovation ecosystems without platform ownership, and what capabilities and governance mechanisms enable this role?"
+
+steps:
+  # --------------------------------------------------------------------------
+  # Phase 1: Load PDFs
+  # --------------------------------------------------------------------------
+  - step: "Load 5 test PDFs"
+    builtin.load_files:
+      file_path: "/Users/iheitlager/studies/ecosystem-review/archive/output/pdf"
+      store_path: "/Users/iheitlager/studies/ecosystem-review/output/evaluation/pdf"
+      limit: 5
+
+  - step: "Export after load (baseline)"
+    builtin.export:
+      format: jsonl
+      output_path: "./output/evaluation/01_after_load.jsonl"
+      exclude_none: true
+      overwrite: true
+
+  - step: "Export after load (BibTeX)"
+    builtin.export:
+      format: bibtex
+      output_path: "./output/evaluation/01_after_load.bib"
+      overwrite: true
+
+  - step: "Checkpoint after load"
+    builtin.checkpoint:
+
+  # --------------------------------------------------------------------------
+  # Phase 2: API metadata retrieval (CrossRef + OpenAlex)
+  # --------------------------------------------------------------------------
+  - step: "Retrieve metadata from APIs"
+    builtin.retrieve_metadata:
+      methods:
+        - crossref
+        - openalex
+      overwrite: false
+
+  - step: "Export after API metadata (JSONL)"
+    builtin.export:
+      format: jsonl
+      output_path: "./output/evaluation/02_after_api_metadata.jsonl"
+      exclude_none: true
+      overwrite: true
+
+  - step: "Export after API metadata (BibTeX)"
+    builtin.export:
+      format: bibtex
+      output_path: "./output/evaluation/02_after_api_metadata.bib"
+      overwrite: true
+
+  - step: "Checkpoint after API metadata"
+    builtin.checkpoint:
+
+  # --------------------------------------------------------------------------
+  # Phase 3: LLM metadata extraction (Haiku)
+  # --------------------------------------------------------------------------
+  - step: "LLM Metadata Extraction (Haiku)"
+    builtin.metadata_extraction:
+      model: "claude-haiku-4-5-20251001"
+      use_pdf: true
+
+  - step: "Export after LLM metadata (JSONL)"
+    builtin.export:
+      format: jsonl
+      output_path: "./output/evaluation/03_after_llm_metadata.jsonl"
+      exclude_none: true
+      overwrite: true
+
+  - step: "Export after LLM metadata (BibTeX)"
+    builtin.export:
+      format: bibtex
+      output_path: "./output/evaluation/03_after_llm_metadata.bib"
+      overwrite: true
+
+  - step: "Checkpoint after LLM metadata"
+    builtin.checkpoint:
+
+  # --------------------------------------------------------------------------
+  # Phase 4: Relevance scoring (Haiku)
+  # --------------------------------------------------------------------------
+  - step: "Relevance Scoring (Haiku)"
+    builtin.relevance_scoring:
+      model: "claude-haiku-4-5-20251001"
+      use_pdf: true
+
+  - step: "Export after relevance scoring (JSONL)"
+    builtin.export:
+      format: jsonl
+      output_path: "./output/evaluation/04_after_relevance.jsonl"
+      exclude_none: true
+      overwrite: true
+
+  - step: "Export after relevance scoring (BibTeX)"
+    builtin.export:
+      format: bibtex
+      output_path: "./output/evaluation/04_after_relevance.bib"
+      overwrite: true
+
+  - step: "Checkpoint after relevance"
+    builtin.checkpoint:
+
+  # --------------------------------------------------------------------------
+  # Phase 5: CAMO extraction (Sonnet — requires included papers)
+  # --------------------------------------------------------------------------
+  - step: "Force include all 5 papers for CAMO evaluation"
+    builtin.patch:
+      patches:
+        - doi: "10.1002/sej.1499"
+          set:
+            screening.final_decision: "included"
+        - doi: "10.1080/10864415.2024.2332047"
+          set:
+            screening.final_decision: "included"
+        - doi: "10.1080/13662716.2023.2189091"
+          set:
+            screening.final_decision: "included"
+        - doi: "10.1109/tem.2021.3075502"
+          set:
+            screening.final_decision: "included"
+        - doi: "10.1186/s13731-024-00404-5"
+          set:
+            screening.final_decision: "included"
+
+  - step: "CAMO Extraction (Sonnet)"
+    builtin.camo_extraction:
+      model: "claude-sonnet-4-5-20250929"
+      use_pdf: true
+
+  - step: "Export after CAMO (JSONL)"
+    builtin.export:
+      format: jsonl
+      output_path: "./output/evaluation/05_after_camo.jsonl"
+      exclude_none: true
+      overwrite: true
+
+  - step: "Export after CAMO (BibTeX)"
+    builtin.export:
+      format: bibtex
+      output_path: "./output/evaluation/05_after_camo.bib"
+      overwrite: true
+
+  - step: "Final checkpoint"
+    builtin.checkpoint:

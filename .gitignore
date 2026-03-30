@@ -2,6 +2,7 @@ db/*
 !db/.gitkeep
 output/*
 !output/.gitkeep
+*.pdf
 
 # LaTeX build artifacts
 *.aux
