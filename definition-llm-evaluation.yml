@@ -33,12 +33,14 @@ steps:
       output_path: "./output/evaluation/01_after_load.jsonl"
       exclude_none: true
       overwrite: true
+      includes: "all"
 
   - step: "Export after load (BibTeX)"
     builtin.export:
       format: bibtex
       output_path: "./output/evaluation/01_after_load.bib"
       overwrite: true
+      includes: "all"
 
   - step: "Checkpoint after load"
     builtin.checkpoint:
@@ -59,12 +61,14 @@ steps:
       output_path: "./output/evaluation/02_after_api_metadata.jsonl"
       exclude_none: true
       overwrite: true
+      includes: "all"
 
   - step: "Export after API metadata (BibTeX)"
     builtin.export:
       format: bibtex
       output_path: "./output/evaluation/02_after_api_metadata.bib"
       overwrite: true
+      includes: "all"
 
   - step: "Checkpoint after API metadata"
     builtin.checkpoint:
@@ -83,12 +87,14 @@ steps:
       output_path: "./output/evaluation/03_after_llm_metadata.jsonl"
       exclude_none: true
       overwrite: true
+      includes: "all"
 
   - step: "Export after LLM metadata (BibTeX)"
     builtin.export:
       format: bibtex
       output_path: "./output/evaluation/03_after_llm_metadata.bib"
       overwrite: true
+      includes: "all"
 
   - step: "Checkpoint after LLM metadata"
     builtin.checkpoint:
@@ -107,12 +113,14 @@ steps:
       output_path: "./output/evaluation/04_after_relevance.jsonl"
       exclude_none: true
       overwrite: true
+      includes: "all"
 
   - step: "Export after relevance scoring (BibTeX)"
     builtin.export:
       format: bibtex
       output_path: "./output/evaluation/04_after_relevance.bib"
       overwrite: true
+      includes: "all"
 
   - step: "Checkpoint after relevance"
     builtin.checkpoint:
